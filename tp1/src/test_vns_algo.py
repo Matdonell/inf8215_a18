@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------
+# Authors: Mathieu Kabore, Florence Gaborit and Reph D. Mombrun
+# Date: 12/09/2018
+# Last update: 12/09/2018
+# INF8215 TP1
+# ----------------------------------------------------------------
+
 import unittest
 import time
 

@@ -1,13 +1,18 @@
 # ----------------------------------------------------------------
 # Authors: Mathieu Kabore, Florence Gaborit and Reph D. Mombrun
 # Date: 11/09/2018
+# Last update: 12/09/2018
 # INF8215 TP1
 # ----------------------------------------------------------------
 
-import heapq
-import time
-import copy
 import numpy as np
+import copy
+import time
+
+try:
+    import Queue as q
+except ImportError:
+    import q
 
 class Solution:
     def __init__(self, places, graph):
@@ -29,35 +34,9 @@ class Solution:
         # TODO : to implement
 
 
-def fastest_path_estimation(sol):
+def bfs(graph, places):
     """
-    Returns the time spent on the fastest path between
-    the current vertex c and the ending vertex pm
-    """
-    c = sol.visited[-1]
-    pm = sol.not_visited[-1]
-    # TODO : to implement
-
-
-def A_star(graph, places):
-    """
-    Performs the A* algorithm
-    """
-
-    # blank solution
-    root = Solution(graph=graph, places=places)
-
-    # search tree T
-    T = []
-    heapq.heapify(T)
-    heapq.heappush(T, root)
-
-    # TODO : to implement and return the optimal solution instead of the root
-    return root
-
-
-def minimum_spanning_arborescence(sol):
-    """
-    Returns the cost to reach the vertices in the unvisited list
+    Returns the best solution which spans over all attractions indicated in 'places'
     """
     # TODO : to implement
+    return Solution(places, graph)
