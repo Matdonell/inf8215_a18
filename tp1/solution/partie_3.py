@@ -9,29 +9,10 @@ import copy
 import numpy as np
 from random import shuffle, randint
 
+from stack import Stack
+from utility import Utility
 
-def read_graph():
-    return np.loadtxt("montreal", dtype='i', delimiter=',')
-
-montreal_graph = read_graph()
-
-
-# Mini implementation of a stack data structure in python
-# https://docs.python.org/3.1/tutorial/datastructures.html
-# https://stackoverflow.com/questions/4688859/stack-data-structure-in-python
-# http://openbookproject.net/thinkcs/python/english3e/stacks.html
-class Stack:
-    def __init__(self):
-        self.items = []
-
-    def push(self, item):
-        self.items.append(item)
-
-    def pop(self):
-        return self.items.pop()
-
-    def is_empty(self):
-        return self.items == []
+montreal_graph = Utility.read_graph()
 
 
 class Solution:
@@ -41,10 +22,11 @@ class Solution:
         p1 = places[0]
         pm = places[-1]
         """
-        self.g = 0 # current cost
+        self.g = 0  # current cost
         self.graph = graph
-        self.visited = [places[0]] # list of already visited attractions
-        self.not_visited = copy.deepcopy(places[1:]) # list of attractions not yet visited
+        self.visited = [places[0]]  # list of already visited attractions
+        # list of attractions not yet visited
+        self.not_visited = copy.deepcopy(places[1:])
 
     def add(self, idx):
         """
@@ -91,6 +73,7 @@ def vns(sol, k_max, t_max):
     """
     # TODO : to implement instead of returning the same solution passed as parameter
     return sol
+
 
 # test 1  --------------  OPT. SOL. = 27
 places = [0, 5, 13, 16, 6, 9, 4]

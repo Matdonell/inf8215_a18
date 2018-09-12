@@ -9,11 +9,9 @@ import time
 import copy
 import numpy as np
 
+from utility import Utility
 
-def read_graph():
-    return np.loadtxt("montreal", dtype='i', delimiter=',')
-
-montreal_graph = read_graph()
+montreal_graph = Utility.read_graph()
 
 
 class Solution:
@@ -23,10 +21,11 @@ class Solution:
         p1 = places[0]
         pm = places[-1]
         """
-        self.g = 0 # current cost
+        self.g = 0  # current cost
         self.graph = graph
-        self.visited = [places[0]] # list of already visited attractions
-        self.not_visited = copy.deepcopy(places[1:]) # list of attractions not yet visited
+        self.visited = [places[0]]  # list of already visited attractions
+        # list of attractions not yet visited
+        self.not_visited = copy.deepcopy(places[1:])
 
     def add(self, idx):
         """
@@ -61,9 +60,10 @@ def A_star(graph, places):
     # TODO : to implement and return the optimal solution instead of the root
     return root
 
+
 # test 1  --------------  OPT. SOL. = 27
 start_time = time.time()
-places=[0, 5, 13, 16, 6, 9, 4]
+places = [0, 5, 13, 16, 6, 9, 4]
 astar_sol = A_star(graph=montreal_graph, places=places)
 print(astar_sol.g)
 print(astar_sol.visited)
@@ -71,7 +71,7 @@ print("--- %s seconds ---" % (time.time() - start_time))
 
 # test 2  --------------  OPT. SOL. = 30
 start_time = time.time()
-places=[0, 1, 4, 9, 20, 18, 16, 5, 13, 19]
+places = [0, 1, 4, 9, 20, 18, 16, 5, 13, 19]
 astar_sol = A_star(graph=montreal_graph, places=places)
 print(astar_sol.g)
 print(astar_sol.visited)
@@ -79,7 +79,7 @@ print("--- %s seconds ---" % (time.time() - start_time))
 
 # test 3  --------------  OPT. SOL. = 26
 start_time = time.time()
-places=[0, 2, 7, 13, 11, 16, 15, 7, 9, 8, 4]
+places = [0, 2, 7, 13, 11, 16, 15, 7, 9, 8, 4]
 astar_sol = A_star(graph=montreal_graph, places=places)
 print(astar_sol.g)
 print(astar_sol.visited)
@@ -87,7 +87,7 @@ print("--- %s seconds ---" % (time.time() - start_time))
 
 # test 4  --------------  OPT. SOL. = 40
 start_time = time.time()
-places=[0, 2, 20, 3, 18, 12, 13, 5, 11, 16, 15, 4, 9, 14, 1]
+places = [0, 2, 20, 3, 18, 12, 13, 5, 11, 16, 15, 4, 9, 14, 1]
 astar_sol = A_star(graph=montreal_graph, places=places)
 print(astar_sol.g)
 print(astar_sol.visited)

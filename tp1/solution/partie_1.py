@@ -6,14 +6,16 @@
 
 import numpy as np
 import copy
-from queue import Queue
 import time
 
+try:
+    import Queue as q
+except ImportError:
+    import q
 
-def read_graph():
-    return np.loadtxt("montreal", dtype='i', delimiter=',')
+from utility import Utility
 
-montreal_graph = read_graph()
+montreal_graph = Utility.read_graph()
 
 
 class Solution:
@@ -23,10 +25,11 @@ class Solution:
         p1 = places[0]
         pm = places[-1]
         """
-        self.g = 0 # current cost
+        self.g = 0  # current cost
         self.graph = graph
-        self.visited = [places[0]] # list of already visited attractions
-        self.not_visited = copy.deepcopy(places[1:]) # list of attractions not yet visited
+        self.visited = [places[0]]  # list of already visited attractions
+        # list of attractions not yet visited
+        self.not_visited = copy.deepcopy(places[1:])
 
     def add(self, idx):
         """
@@ -39,7 +42,9 @@ def bfs(graph, places):
     """
     Returns the best solution which spans over all attractions indicated in 'places'
     """
-    return Solution(places, graph)  # TODO : to implement
+    # TODO : to implement
+    return Solution(places, graph)
+
 
 # test 1  --------------  OPT. SOL. = 27
 start_time = time.time()
