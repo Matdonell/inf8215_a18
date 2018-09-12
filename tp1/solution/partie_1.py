@@ -44,25 +44,3 @@ def bfs(graph, places):
     """
     # TODO : to implement
     return Solution(places, graph)
-
-
-# test 1  --------------  OPT. SOL. = 27
-start_time = time.time()
-places = [0, 5, 13, 16, 6, 9, 4]
-sol = bfs(graph=montreal_graph, places=places)
-print(sol.g)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-# test 2 -------------- OPT. SOL. = 30
-start_time = time.time()
-places = [0, 1, 4, 9, 20, 18, 16, 5, 13, 19]
-sol = bfs(graph=montreal_graph, places=places)
-print(sol.g)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-# test 3 -------------- OPT. SOL. = 26
-start_time = time.time()
-places = [0, 2, 7, 13, 11, 16, 15, 7, 9, 8, 4]
-sol = bfs(graph=montreal_graph, places=places)
-print(sol.g)
-print("--- %s seconds ---" % (time.time() - start_time))

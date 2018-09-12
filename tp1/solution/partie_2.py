@@ -61,39 +61,6 @@ def A_star(graph, places):
     return root
 
 
-# test 1  --------------  OPT. SOL. = 27
-start_time = time.time()
-places = [0, 5, 13, 16, 6, 9, 4]
-astar_sol = A_star(graph=montreal_graph, places=places)
-print(astar_sol.g)
-print(astar_sol.visited)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-# test 2  --------------  OPT. SOL. = 30
-start_time = time.time()
-places = [0, 1, 4, 9, 20, 18, 16, 5, 13, 19]
-astar_sol = A_star(graph=montreal_graph, places=places)
-print(astar_sol.g)
-print(astar_sol.visited)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-# test 3  --------------  OPT. SOL. = 26
-start_time = time.time()
-places = [0, 2, 7, 13, 11, 16, 15, 7, 9, 8, 4]
-astar_sol = A_star(graph=montreal_graph, places=places)
-print(astar_sol.g)
-print(astar_sol.visited)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-# test 4  --------------  OPT. SOL. = 40
-start_time = time.time()
-places = [0, 2, 20, 3, 18, 12, 13, 5, 11, 16, 15, 4, 9, 14, 1]
-astar_sol = A_star(graph=montreal_graph, places=places)
-print(astar_sol.g)
-print(astar_sol.visited)
-print("--- %s seconds ---" % (time.time() - start_time))
-
-
 def minimum_spanning_arborescence(sol):
     """
     Returns the cost to reach the vertices in the unvisited list
