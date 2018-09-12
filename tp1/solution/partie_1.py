@@ -13,11 +13,6 @@ try:
 except ImportError:
     import q
 
-from utility import Utility
-
-montreal_graph = Utility.read_graph()
-
-
 class Solution:
     def __init__(self, places, graph):
         """
