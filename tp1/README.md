@@ -11,7 +11,7 @@
     cd inf8215_a18/tp1/src/
     
   
-## Running the test cases for BFS (Breadth First Search algorithm)
+## Running the tests cases for BFS (Breadth First Search algorithm)
     
   1 - using Python Version <= 2
   
@@ -22,7 +22,7 @@
     python3 -m unittest test_bfs_algo.py
     
     
-## Running the test cases for A* algorithm
+## Running the tests cases for A* algorithm
     
   1 - using Python Version <= 2
   
@@ -33,7 +33,7 @@
     python3 -m unittest test_a_star_algo.py
   
    
-## Running the test cases for VNS (Variable neighborhood search)
+## Running the tests cases for VNS (Variable neighborhood search)
     
   1 - using Python Version <= 2
   
