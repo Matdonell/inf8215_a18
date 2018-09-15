@@ -5,16 +5,15 @@
 # INF8215 TP1
 # ----------------------------------------------------------------
 
-import numpy as np
 import copy
-import time
-import math
+import heapq
 
+# Ensure to support Python 2 and 3 by using the correct import
+try:
+    import queue as q
+except ImportError:
+    import Queue as q
 
-# try:
-#     import Queue as q
-# except ImportError:
-#     import q
 
 class Solution:
     def __init__(self, places, graph):
@@ -28,53 +27,63 @@ class Solution:
         self.visited = [places[0]]  # list of already visited attractions
         # list of attractions not yet visited
         self.not_visited = copy.deepcopy(places[1:])
-        self.places = places
 
     def add(self, idx):
-        s= copy.deepcopy(self)
-       # print("id ", idx, "--", len(self.not_visited))
-        s.g +=self.graph[s.visited[-1]][self.not_visited[idx]]
-        s.visited.append(self.not_visited[idx])
-        del s.not_visited[idx]
-        return s
-       
         """
         Adds the point in position idx of not_visited list to the solution
         """
 
+        # Return and remove the not visited element at the given index
+        node_to_visit = self.not_visited.pop(idx)
+        last_visited = self.visited[-1]
+
+        # Update the cost for the current move
+        self.g += self.graph[last_visited][node_to_visit]
+
+        # Mark the attraction as visited
+        self.visited.append(node_to_visit)
+
+    def __lt__(self, other):
+        if not isinstance(other, Solution):
+            raise ValueError("The parameter should be a type of Solution")
+        return self.g < other.g
+
 
 def bfs(graph, places):
-    
     """
     Returns the best solution which spans over all attractions indicated in 'places'
     """
-    racine=Solution(places, graph) # premier noeud'
-    q0 = [racine]  # création de la file initiale
 
-    while len(q0[0].not_visited) >= 2: # tant que il reste des points non visités dans la première solution de la file'
-         solution_mere=q0[0] # on prend le premier de la file'
+    # Create the initial solution and store it in the partial solutions queue
+    initial_node = Solution(places, graph)
+    partial_sol = q.Queue()
+    partial_sol.put(initial_node)
 
-         for i in range(len(solution_mere.not_visited)-1): # on construit ses enfants'
-             #print("--", i)
-             q0.append(solution_mere.add(i))
+    # Create a priority queue to store all complete solutions (Predicate = cost = g)
+    complete_sol = []
+    heapq.heapify(complete_sol)
 
-             #print ("before", q0)
+    # Generate all the possible solutions
+    while not partial_sol.empty():
 
-         del q0[0] # on supprime le premier de la file'
-        # print ("after", q0)
+        # Return and remove the solution (node) in the bottom of the queue
+        current_node = partial_sol.get()
 
+        # Generate the sub nodes (a.k.a expand the sub solutions) from the current
+        # Notice: skip the destination attraction for now
+        for i in range(len(current_node.not_visited) - 1):
+            sub_node = copy.deepcopy(current_node)
+            sub_node.add(i)
 
-    min=math.inf
-    optimum=q0[0]
-    q1=[]
+            # At the last not visited attraction (pm),
+            # add it and push the complete solution into the priority queue
+            if len(sub_node.not_visited) == 1:
+                sub_node.add(0)
+                heapq.heappush(complete_sol, sub_node)
+            else:
+                # Adding the partial sub solution at this state to the partial solutions queue
+                partial_sol.put(sub_node)
 
-    for j in range(len(q0)):
-        q1.append(q0[j].add(0))
-       # print ("before2", q1) # ajout de pm'
-
-        if q1[j].g<=min:
-            min=q1[j].g
-            optimum=q1[j]
-           # print(min)
-
-    return optimum
+    # Return the complete solution with the lowest cost
+    # Based on the predicate related to the cost defined in the Solution class __lt__
+    return heapq.heappop(complete_sol)
