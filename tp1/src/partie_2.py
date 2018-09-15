@@ -10,6 +10,7 @@ import time
 import copy
 import numpy as np
 
+
 class Solution:
     def __init__(self, places, graph):
         """
