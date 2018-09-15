@@ -8,6 +8,8 @@
 import numpy as np
 import copy
 import time
+import math
+
 
 try:
     import Queue as q
@@ -28,15 +30,50 @@ class Solution:
         self.not_visited = copy.deepcopy(places[1:])
 
     def add(self, idx):
+        s=Solution(places, graph)
+        s.visited=self.visited
+        s.not_visited=self.not_visited
+        s.g = self.g
+        s.g +=graph[s.visited[-1]][self.not_visited[idx]]
+        s.visited.append(self.not_visited[idx])
+        del self.not_visited[idx]
+        return s
+       
         """
         Adds the point in position idx of not_visited list to the solution
         """
-        # TODO : to implement
 
 
 def bfs(graph, places):
+    
     """
     Returns the best solution which spans over all attractions indicated in 'places'
     """
-    # TODO : to implement
+    racine=Solution(places, graph) 'premier noeud'
+    q =[] 'création de la file'
+    q.append(racine) 'file initiale'
+    while len(q[0].not_visited) >= 2: 'tant que il reste des points non visités dans la première solution de la file'
+         solution_mere=q[0]; 'on prend le premier de la file'
+         for i in range(len(solution_mere.not_visited)-1): 'on construit ses enfants'
+             q.append(add(solution_mere, i)
+        del q[0] 'on supprime le premier de la file'
+        min=math.inf
+        optimum=q[0]
+    for j in range(len(q)):
+        q[j]=add(q[j], 0) 'ajout de pm'
+        if q[j].g<=min:
+            min=q[j].g
+            optimum=q[j]
+    return min
+    
+    
+    
+    
+    
+        
+    
+    
     return Solution(places, graph)
+    
+    
+    
