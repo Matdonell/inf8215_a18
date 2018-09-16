@@ -32,6 +32,9 @@ class Solution:
         """
         Adds the point in position idx of not_visited list to the solution
         """
+        # Check if we are a valid index before processing the task
+        if len(self.not_visited) <= idx:
+            raise ValueError("The parameter should be a type of Solution")
 
         # Return and remove the not visited element at the given index
         node_to_visit = self.not_visited.pop(idx)
