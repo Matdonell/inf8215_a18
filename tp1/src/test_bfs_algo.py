@@ -22,7 +22,7 @@ class BfsExplorerTest(unittest.TestCase):
     def test_1(self):
         # test 1  --------------  OPT. SOL. = 27
 
-       # Arrange
+        # Arrange
         places = [0, 5, 13, 16, 6, 9, 4]
         expected_cost = 27
 
@@ -34,7 +34,7 @@ class BfsExplorerTest(unittest.TestCase):
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        self.assertEquals(sol.g, expected_cost)
+        self.assertEqual(sol.g, expected_cost)
 
     def test_2(self):
         # test 2 -------------- OPT. SOL. = 30
@@ -50,7 +50,7 @@ class BfsExplorerTest(unittest.TestCase):
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        self.assertEquals(sol.g, expected_cost)
+        self.assertEqual(sol.g, expected_cost)
 
     def test_3(self):
         # test 3 -------------- OPT. SOL. = 26
@@ -66,7 +66,7 @@ class BfsExplorerTest(unittest.TestCase):
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        self.assertEquals(sol.g, expected_cost)
+        self.assertEqual(sol.g, expected_cost)
 
 
 if __name__ == '__main__':
