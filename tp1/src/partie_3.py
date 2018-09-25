@@ -69,64 +69,65 @@ class Solution:
         """
         Adds the point in position idx of not_visited list to the solution
         """
-        # TODO : to implement
+        # Check if we are a valid index before processing the task
+        if len(self.not_visited) <= idx:
+            raise ValueError("The parameter should be a type of Solution")
+
+        # Return and remove the not visited element at the given index
+        node_to_visit = self.not_visited.pop(idx)
+        last_visited = self.visited[-1]
+
+        # Update the cost for the current move
+        self.g += self.graph[last_visited][node_to_visit]
+
+        # Mark the attraction as visited
+        self.visited.append(node_to_visit)
 
 
 def initial_sol(graph, places_to_visit):
     """
     Return a completed initial solution
     """
-    # Prepare the stack for the DFS
-    stack = Stack()
+    assert len(places_to_visit) > 2
 
-    return dfs(graph, places_to_visit)
+    sol = Solution(places_to_visit, graph)
+    while len(sol.not_visited) != 1:
+        idx = randint(0, len(sol.not_visited) - 1)
+        sol = sol.add(idx)
 
+    sol = sol.add(0)
 
-def dfs(graph, places_to_visit):
-    """
-    Performs a Depth-First Search
-    """
-
-    # Initialize a look up table to keep track of places already
-    # visited and therefore avoid infinite loop and
-    # mark the first vertex as visited
-    visited = {places_to_visit[0]: True}
-
-    # Push the first vertex onto the stack
-    # stack.push(places_to_visit[0])
-    #
-    # while not stack.is_empty():
-    #     stack.pop()
+    return sol
 
 
 def shaking(sol, k):
     """
     Returns a solution on the k-th neighborhood of sol
     """
-    # TODO : to implement instead of returning the same solution passed as parameter
 
     assert(isinstance(sol, Solution))
-
-    m = len(sol.visited) - 1
-    random_i = randint(2, m - 1)
-    random_j = random_i
-    while random_j == random_i:
-        random_j = randint(2, m - 1)
-
-    # Clone the current solution
-    new_sol = copy.deepcopy(sol)
-
-    # Swap 2 nodes
-
-
-    return sol
+    new_sol = copy.deepcopy(sol)  # Clone the current solution
+    for i in range(k):
+        m = len(sol.visited) - 1  # sol is supposed to be a complete solution
+        random_i = randint(1, m - 2)  # since indices start at 0 for the visited python list
+        random_j = random_i
+        while random_j == random_i:
+            random_j = randint(1, m - 2)
+        new_sol = new_sol.swap(random_i, random_j) # Swap 2 cities
+    return new_sol
 
 
 def local_search_2opt(sol):
     """
     Apply 2-opt local search over sol
     """
-    # TODO : to implement instead of returning the same solution passed as parameter
+    n=len(sol.visited)
+    for j in range(2, n):
+        for i in range(1, j):
+            L=sol.visited[i+1:j-1]
+            L=L.reverse()
+            new_visited=sol.visited[:i-1]+sol.visited[j]+L+sol.visited[i]+sol.visited[j+1:]
+            #recreer une solution avec la bonne liste et recalculer le cout + verifier que ca marche
     return sol
 
 
@@ -165,5 +166,4 @@ def current_time_in_ms():
 
 def get_random_not_visited_adjacent(vertex, graph, visited):
     adjacents = []
-
     return None
