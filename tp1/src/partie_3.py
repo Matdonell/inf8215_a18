@@ -76,7 +76,9 @@ def initial_sol(graph, places_to_visit):
     """
     Return a completed initial solution
     """
-    # TODO : to verify
+    # Prepare the stack for the DFS
+    stack = Stack()
+
     return dfs(graph, places_to_visit)
 
 
@@ -85,21 +87,16 @@ def dfs(graph, places_to_visit):
     Performs a Depth-First Search
     """
 
-    # Prepare the stack for the DFS
-    stack = Stack()
-
     # Initialize a look up table to keep track of places already
-    # visited and therefore avoid infinite loop
-    visited = {}
-
-    # Mark the first vertex as visited
-    visited[places_to_visit[0]] = True
+    # visited and therefore avoid infinite loop and
+    # mark the first vertex as visited
+    visited = {places_to_visit[0]: True}
 
     # Push the first vertex onto the stack
-    stack.push(places_to_visit[0])
-
-    while not stack.is_empty():
-        stack.pop()
+    # stack.push(places_to_visit[0])
+    #
+    # while not stack.is_empty():
+    #     stack.pop()
 
 
 def shaking(sol, k):
@@ -139,7 +136,7 @@ def vns(sol, k_max, t_max):
     """
 
     # hypothesis: neighborhood k corresponds to the permutations
-    # of k pairs of vrtices. Also, we supposed that the sol parameter
+    # of k pairs of vertices. Also, we supposed that the sol parameter
     # is the initial solution.
 
     t_init = current_time_in_ms()
@@ -147,16 +144,23 @@ def vns(sol, k_max, t_max):
     duration = 0
     k = 1
     while (k <= k_max) and duration < t_max:
+
+        # TODO : Generate a random solution in the kth neighborhood
+        # ...
+
+        # Do a local search in the kth neighborhood starting
+        # from
         kth_neighborhood_best_sol = shaking(best_sol, k)
         if kth_neighborhood_best_sol.g < best_sol.g: # reminder: the lower the g cost is, better is the solution
             best_sol = kth_neighborhood_best_sol
         duration = current_time_in_ms() - t_init
-        k = k + 1
+        k += 1
 
     return best_sol
 
-# https://stackoverflow.com/questions/5998245/get-current-time-in-milliseconds-in-python
-current_time_in_ms = lambda: int(round(time.time() * 1000))
+
+def current_time_in_ms():
+    return int(round(time.time() * 1000))
 
 
 def get_random_not_visited_adjacent(vertex, graph, visited):
