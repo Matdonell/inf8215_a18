@@ -34,7 +34,7 @@ class Solution:
         """
         # Check if we are a valid index before processing the task
         if len(self.not_visited) <= idx:
-            raise ValueError("The parameter should be a type of Solution")
+            raise ValueError("The input index is out of range for the not visited list")
 
         # Return and remove the not visited element at the given index
         node_to_visit = self.not_visited.pop(idx)
