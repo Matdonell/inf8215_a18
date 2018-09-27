@@ -9,7 +9,6 @@ import copy
 import heapq
 import math
 
-
 # Ensure to support Python 2 and 3 by using the correct import
 try:
     import queue as q
@@ -28,8 +27,7 @@ class Solution:
         self.h = 0  # the cost to go to the destination
         self.graph = graph
         self.visited = [places[0]]  # list of already visited attractions
-        # list of attractions not yet visited
-        self.not_visited = copy.deepcopy(places[1:])
+        self.not_visited = copy.deepcopy(places[1:])  # list of attractions not yet visited
 
     def add(self, idx):
         """
@@ -48,12 +46,6 @@ class Solution:
 
         # Mark the attraction as visited
         self.visited.append(node_to_visit)
-
-    def draw(self):
-        print("g=", self.g)
-        print("h=", self.h)
-        print("v", self.visited)
-        print("not_v", self.not_visited)
 
     def __lt__(self, other):
         if not isinstance(other, Solution):
