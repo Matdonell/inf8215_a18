@@ -35,7 +35,7 @@ class AStarExplorerTest(unittest.TestCase):
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        self.assertEquals(astar_sol.g, expected_cost)
+        self.assertEqual(astar_sol.g, expected_cost)
 
     def test_2(self):
         # test 2  --------------  OPT. SOL. = 30
@@ -47,13 +47,13 @@ class AStarExplorerTest(unittest.TestCase):
         # Act
         start_time = time.time()
         astar_sol = AStarExplorer.A_star(graph=self.montreal_graph, places=places)
-        
+
         print(astar_sol.g)
         print(astar_sol.visited)
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        self.assertEquals(astar_sol.g, expected_cost)
+        self.assertEqual(astar_sol.g, expected_cost)
 
     def test_3(self):
         # test 3  --------------  OPT. SOL. = 26
@@ -65,13 +65,13 @@ class AStarExplorerTest(unittest.TestCase):
         # Act
         start_time = time.time()
         astar_sol = AStarExplorer.A_star(graph=self.montreal_graph, places=places)
-        
+
         print(astar_sol.g)
         print(astar_sol.visited)
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        self.assertEquals(astar_sol.g, expected_cost)
+        self.assertEqual(astar_sol.g, expected_cost)
 
     def test_4(self):
         # test 4  --------------  OPT. SOL. = 40
@@ -83,13 +83,13 @@ class AStarExplorerTest(unittest.TestCase):
         # Act
         start_time = time.time()
         astar_sol = AStarExplorer.A_star(graph=self.montreal_graph, places=places)
-        
+
         print(astar_sol.g)
         print(astar_sol.visited)
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        self.assertEquals(astar_sol.g, expected_cost)
+        self.assertEqual(astar_sol.g, expected_cost)
 
 
 if __name__ == '__main__':
