@@ -83,7 +83,7 @@ def fastest_path_estimation(sol):
     heapq.heappush(T, sol)
     distance_map[c] = 0
 
-    while len(T) != 0:
+    while T:
 
         # Return and remove the node with the best cost
         best_sol = heapq.heappop(T)
@@ -125,20 +125,24 @@ def A_star(graph, places):
     heapq.heappush(T, root)
     best_solution = copy.deepcopy(root)
 
-    # Generate all the possible solutions
-    while not len(best_solution.not_visited) == 0:
+    while best_solution.not_visited:
         best_solution = heapq.heappop(T)
 
+        # Since we are skipping the destination node pm when expanding the sub nodes
+        # if we have one last node to visit for a specific branch (pm)
+        # Add it into the solution and stop the search
         if len(best_solution.not_visited) == 1:
-            # Add the destination node pm
             best_solution.add(0)
             return best_solution
         else:
             # Generate the sub nodes (a.k.a expand the sub solutions) from the current
             # Notice: skip the destination attraction for now
+            # And find the fastest path between the node and the destination
             for i in range(len(best_solution.not_visited) - 1):
                 new_sol = copy.deepcopy(best_solution)
                 new_sol.add(i)
+
+                # Update the fastest path to pm
                 new_sol.h = fastest_path_estimation(new_sol)
                 heapq.heappush(T, new_sol)
 
