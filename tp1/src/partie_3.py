@@ -122,13 +122,24 @@ def local_search_2opt(sol):
     Apply 2-opt local search over sol
     """
     n=len(sol.visited)
+    min=sol.g
+    opt_sol=copy.deepcopy(sol)
     for j in range(2, n):
         for i in range(1, j):
             L=sol.visited[i+1:j-1]
             L=L.reverse()
             new_visited=sol.visited[:i-1]+sol.visited[j]+L+sol.visited[i]+sol.visited[j+1:]
-            #recreer une solution avec la bonne liste et recalculer le cout + verifier que ca marche
-    return sol
+            new_sol=copy.deepcopy(sol)
+            new_sol.visited=new_visited
+            new_sol.g=0
+            for k in range(n-1):
+                new_sol.g+=graph[visited[k]][visited[k+1]]
+            if new_sol.g<min:
+                opt_sol=copy.deepcopy(new.sol.g)
+                min=new.=_sol.g
+            #recreer une solution avec la bonne liste et recalculer le cout 
+            #verifier que ca marche ?
+    return opt_sol
 
 
 def vns(sol, k_max, t_max):
