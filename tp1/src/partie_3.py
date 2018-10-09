@@ -133,11 +133,11 @@ def local_search_2opt(sol):
             new_sol.visited=new_visited
             new_sol.g=0
             for k in range(n-1):
-                new_sol.g+=graph[visited[k]][visited[k+1]]
+                new_sol.g+=sol.graph[new_visited[k]][new_visited[k+1]]
             if new_sol.g<min:
-                opt_sol=copy.deepcopy(new.sol.g)
-                min=new.=_sol.g
-            #recreer une solution avec la bonne liste et recalculer le cout 
+                opt_sol=copy.deepcopy(new_sol.g)
+                min=new_sol.g
+            #pour recreer une solution avec la bonne liste et recalculer le cout 
             #verifier que ca marche ?
     return opt_sol
 
