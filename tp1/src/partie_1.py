@@ -25,7 +25,7 @@ class Solution:
         self.g = 0  # current cost
         self.graph = graph
         self.visited = [places[0]]  # list of already visited attractions
-        self.not_visited = copy.deepcopy(places[1:]) # list of attractions not yet visited
+        self.not_visited = copy.deepcopy(places[1:])  # list of attractions not yet visited
 
     def add(self, idx):
         """

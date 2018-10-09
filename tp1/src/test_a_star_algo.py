@@ -13,8 +13,8 @@ from utility import Utility
 
 
 class AStarExplorerTest(unittest.TestCase):
-    def __init__(self, methodName='runTest'):
-        super(AStarExplorerTest, self).__init__(methodName)
+    def __init__(self, method_name='runTest'):
+        super(AStarExplorerTest, self).__init__(method_name)
 
     def setUp(self):
         self.montreal_graph = Utility.read_graph()
