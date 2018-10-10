@@ -13,8 +13,8 @@ from utility import Utility
 
 
 class AStarExplorerTest(unittest.TestCase):
-    def __init__(self, methodName='runTest'):
-        super(AStarExplorerTest, self).__init__(methodName)
+    def __init__(self, method_name='runTest'):
+        super(AStarExplorerTest, self).__init__(method_name)
 
     def setUp(self):
         self.montreal_graph = Utility.read_graph()
@@ -73,23 +73,23 @@ class AStarExplorerTest(unittest.TestCase):
         # Assert
         self.assertEqual(expected_cost, astar_sol.g)
 
-    # def test_4(self):
-    #     # test 4  --------------  OPT. SOL. = 40
-    #
-    #     # Arrange
-    #     places = [0, 2, 20, 3, 18, 12, 13, 5, 11, 16, 15, 4, 9, 14, 1]
-    #     expected_cost = 40
-    #
-    #     # Act
-    #     start_time = time.time()
-    #     astar_sol = AStarExplorer.A_star(graph=self.montreal_graph, places=places)
-    #
-    #     print(astar_sol.g)
-    #     print(astar_sol.visited)
-    #     print("--- %s seconds ---" % (time.time() - start_time))
-    #
-    #     # Assert
-    #     self.assertEqual(expected_cost, astar_sol.g)
+    def test_4(self):
+        # test 4  --------------  OPT. SOL. = 40
+
+        # Arrange
+        places = [0, 2, 20, 3, 18, 12, 13, 5, 11, 16, 15, 4, 9, 14, 1]
+        expected_cost = 40
+
+        # Act
+        start_time = time.time()
+        astar_sol = AStarExplorer.A_star(graph=self.montreal_graph, places=places)
+
+        print(astar_sol.g)
+        print(astar_sol.visited)
+        print("--- %s seconds ---" % (time.time() - start_time))
+
+        # Assert
+        self.assertEqual(expected_cost, astar_sol.g)
 
 
 if __name__ == '__main__':
