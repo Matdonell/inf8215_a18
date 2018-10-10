@@ -177,7 +177,12 @@ def A_star(graph, places):
 
                 # Update the fastest path to pm
                 # new_sol.h = fastest_path_estimation(new_sol)
-                new_sol.h = get_total_cost(minimum_spanning_arborescence(new_sol.not_visited, edges, new_sol.visited[-1]))
+                test = minimum_spanning_arborescence(new_sol.not_visited, edges, new_sol.visited[-1])
+                de = None
+                for d in test:
+                    de = test.[d]
+                    break
+                new_sol.h = get_total_cost(test) + graph[new_sol.visited[-1]][de.from_v]
                 heapq.heappush(T, new_sol)
 
     return best_solution
