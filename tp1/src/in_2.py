@@ -149,6 +149,9 @@ def A_star(graph, places):
 
                 heapq.heappush(edges, edge)
 
+    for edge in edges:
+        edge.print()
+
     new_sol = minimum_spanning_arborescence(root.not_visited, edges, root.visited[-1])
 
     print("result : ", new_sol)
@@ -177,12 +180,7 @@ def A_star(graph, places):
 
                 # Update the fastest path to pm
                 # new_sol.h = fastest_path_estimation(new_sol)
-                test = minimum_spanning_arborescence(new_sol.not_visited, edges, new_sol.visited[-1])
-                de = None
-                for d in test:
-                    de = test[d]
-                    break
-                new_sol.h = get_total_cost(test) + graph[new_sol.visited[-1]][de.from_v]
+                new_sol.h = get_total_cost(minimum_spanning_arborescence(root.not_visited, edges, root.visited[-1]))
                 heapq.heappush(T, new_sol)
 
     return best_solution
@@ -261,10 +259,10 @@ def minimum_spanning_arborescence(V, E, root):
         A = minimum_spanning_arborescence(V_0, E_0, root)  # A ← Get1Best({V0, E0}, ROOT )
 
         path = []
-        # if len(A) >= v_C:
-        if not [e for e in cycle if
-                not [k for k in kicks_out[A[v_C]] if e.from_v != k.from_v and e.to_v != k.to_v]]:
-            path.append(e)
+        if len(A) >= v_C:
+            if not [e for e in cycle if
+                    not [k for k in kicks_out[A[v_C]] if e.from_v != k.from_v and e.to_v != k.to_v]]:
+                path.append(e)
 
         path.append(real[e_0])
         return path  # return {real[e0] | e0 ∈ A} ∪ (CE \ {kicksOut[A[vC]]})
@@ -303,3 +301,67 @@ def get_total_cost(list_of_edges):
         cost += list_of_edges[edge].weight
 
     return cost
+
+# def minimum_spanning_arborescence(sol):
+#     """
+#     Returns the cost to reach the vertices in the unvisited list
+#     """
+#     if not isinstance(sol, Solution):
+#         raise ValueError("The parameter should be a type of Solution")
+#
+#     root = sol.visited[-1]  # The root is the last visited node
+#     pm = sol.not_visited[-1]  # the destination node
+#     lowest_cost = 0
+#
+#     edges = []
+#     heapq.heapify(edges)
+#
+#     for i in range(len(sol.not_visited)):
+#         weight = sol.graph[root][sol.not_visited[i]]
+#         edge = Edge(root, sol.not_visited[i], weight)
+#         heapq.heappush(edges, edge)
+#
+#     for i in range(len(sol.not_visited)):
+#         for j in range(len(sol.not_visited)):
+#             weight = sol.graph[sol.not_visited[i]][sol.not_visited[j]]
+#             edge = Edge(sol.not_visited[i], sol.not_visited[j], weight)
+#             heapq.heappush(edges, edge)
+#
+#     # Remove all edges from E with destination 'root'
+#     # Replace parallels edges with the minimum of them
+#     for edge in edges:
+#         for e in edges:
+#             if e.from_v == edge.to_v and e.to_v == edge.from_v:
+#                 if e.weight < edge.weight:
+#                     edges.remove(edge)
+#                 else:
+#                     edges.remove(e)
+#
+#     P = []
+#     # For each node v != root
+#     for node in sol.not_visited:
+#         # P = Find all incoming source t to v with lowest cost and != root
+#         P = [edge for edge in edges if edge.to_v == node]
+#
+#         # for edge in P:
+#         #     edge.print()
+#
+#         # if P does not contains a cycle:
+#         # return P Research DONE!
+#         # cycle = get_cycle(node, P)
+#
+#         # print(cycle)
+#         return
+#
+#     #     if cycle is not None:
+#     #         return
+#     #
+#     #     # Else: P contains at least 1 cycle
+#     #     # C = get a random cycle from P
+#     #     # D' = Define a new weighted directed Graph D' in which C is contracted as follow:
+#     #     # Call recursivelly minimum_spanning_arborescence(D')
+#     #
+#     # for edge in P:
+#     #     lowest_cost += edge.weight
+#
+#     return lowest_cost
