@@ -196,16 +196,18 @@ def vns(sol, k_max, t_max):
         new_sol = shaking(best_sol, k)
 
         # Do a local search on the solution generated from the kth neighborhood
-        new_sol = local_search_2opt(new_sol, True, t_init, t_max)
+        new_sol = local_search_2opt(new_sol, False, t_init, t_max)
 
         # If the new solution has a better cost then,
         # update the current best solution
         if new_sol.g < best_sol.g:
             best_sol = copy.deepcopy(new_sol)
+            k = 1
+        else:
+            k += 1
 
-        # Keep track of the elapsed time and the neighborhood
+        # Keep track of the elapsed time
         duration = time.time() - t_init
-        k += 1
 
     return best_sol
 
