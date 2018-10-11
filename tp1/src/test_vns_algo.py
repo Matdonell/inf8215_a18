@@ -29,7 +29,7 @@ class VnsExplorerTest(unittest.TestCase):
         # Act
         sol = VnsExplorer.initial_sol(self.montreal_graph, places)
         start_time = time.time()
-        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)  # For 1s pass t_max = 1000 ms
+        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)
 
         print(vns_sol.g)
         print(vns_sol.visited)
@@ -50,7 +50,7 @@ class VnsExplorerTest(unittest.TestCase):
         # Act
         sol = VnsExplorer.initial_sol(self.montreal_graph, places)
         start_time = time.time()
-        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)  # For 1s pass t_max = 1000 ms
+        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)
 
         print(vns_sol.g)
         print(vns_sol.visited)
@@ -71,7 +71,7 @@ class VnsExplorerTest(unittest.TestCase):
         # Act
         sol = VnsExplorer.initial_sol(self.montreal_graph, places)
         start_time = time.time()
-        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)  # For 1s pass t_max = 1000 ms
+        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)
 
         print(vns_sol.g)
         print(vns_sol.visited)
@@ -92,7 +92,7 @@ class VnsExplorerTest(unittest.TestCase):
         # Act
         sol = VnsExplorer.initial_sol(self.montreal_graph, places)
         start_time = time.time()
-        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)  # For 1s pass t_max = 1000 ms
+        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)
 
         print(vns_sol.g)
         print(vns_sol.visited)
