@@ -17,6 +17,8 @@ try:
 except ImportError:
     import Queue as q
 
+infinit_val = 10000000000000
+
 
 class Solution:
     def __init__(self, places, graph):
@@ -104,7 +106,6 @@ def fastest_path_estimation(sol):
             # If we have a best move with less cost, let's update the new cost
             if new_cost < distance_map[best_sol.not_visited[i]]:
                 distance_map[best_sol.not_visited[i]] = new_cost
-
                 sub_node = copy.deepcopy(best_sol)
                 sub_node.add(i)
                 sub_node.g = new_cost
@@ -130,12 +131,6 @@ def A_star(graph, places):
     edges = []
     heapq.heapify(edges)
 
-    # Generate all the outgoing edges from the root
-    # for i in range(len(root.not_visited)):
-    #     weight = root.graph[root.visited[-1]][root.not_visited[i]]
-    #     edge = Edge(root.visited[-1], root.not_visited[i], weight)
-    #     heapq.heappush(edges, edge)
-
     # Generate all edges between the nodes except the root
     for i in range(len(root.not_visited)):
         for j in range(len(root.not_visited)):
@@ -149,15 +144,6 @@ def A_star(graph, places):
 
                 heapq.heappush(edges, edge)
 
-    new_sol = minimum_spanning_arborescence(root.not_visited, edges, root.visited[-1])
-
-    print("result : ", new_sol)
-
-    for e in new_sol:
-        print(new_sol[e])
-
-    print("total_cost", get_total_cost(new_sol))
-    #
     while best_solution.not_visited:
         best_solution = heapq.heappop(T)
 
@@ -177,28 +163,30 @@ def A_star(graph, places):
 
                 # Update the fastest path to pm
                 # new_sol.h = fastest_path_estimation(new_sol)
-                test = minimum_spanning_arborescence(new_sol.not_visited, edges, new_sol.visited[-1])
-                de = None
-                for d in test:
-                    de = test[d]
-                    break
-                new_sol.h = get_total_cost(test) + graph[new_sol.visited[-1]][de.from_v]
+
+                new_edges = []
+                for i in range(len(new_sol.not_visited)):
+                    for j in range(len(new_sol.not_visited)):
+
+                        if new_sol.not_visited[i] != new_sol.not_visited[j]:
+                            # Get the weight
+                            weight = new_sol.graph[new_sol.not_visited[i]][new_sol.not_visited[j]]
+
+                            # Create the node and add it to the queue
+                            edge = Edge(new_sol.not_visited[i], new_sol.not_visited[j], weight)
+
+                            new_edges.append(edge)
+
+                result = minimum_spanning_arborescence(new_sol, edges)
+
+                new_sol.h = get_total_cost(result, new_sol)
+
                 heapq.heappush(T, new_sol)
 
     return best_solution
 
 
-infinit_val = 10000000000000
-
-
-def gen_node_code():
-    global infinit_val
-    infinit_val -= 1
-
-    return infinit_val
-
-
-def minimum_spanning_arborescence(V, E, root):
+def minimum_spanning_arborescence(sol, E):
     """
     Returns the cost to reach the vertices in the unvisited list
     """
@@ -209,9 +197,12 @@ def minimum_spanning_arborescence(V, E, root):
     # pm = sol.not_visited[-1]  # the destination node
 
     best_in_edge = {}
-    kicks_out = {}
+    removed_edge_bag = {}
     real = {}
     E = copy.deepcopy(E)
+
+    V = sol.not_visited
+    root = sol.visited[-1]
 
     for v in V:
         incoming_edge_to_v = []
@@ -228,46 +219,44 @@ def minimum_spanning_arborescence(V, E, root):
             return best_in_edge
 
         # build a new graph in which C is contracted into a single node
-        v_C = gen_node_code()  # vC ← new Node
-        V_0 = [n for n in V if not [c for c in cycle if c.from_v == n or c.to_v == n]]  # V0 ← V ∪ {vC } \ C
-        V_0.append(v_C)
-        E_0 = []
+        new_node = gen_node_code()  # vC ← new Node
+        new_sub_node = [n for n in V if not [c for c in cycle if c.from_v == n or c.to_v == n]]  # V0 ← V ∪ {vC } \ C
+        new_sub_node.append(new_node)
+        new_edges = []
 
         for e in cycle:  # e = (t, u) in E:
             contains_t = [c for c in cycle if c.from_v == e.from_v or c.to_v == e.from_v]
             contains_u = [c for c in cycle if c.from_v == e.to_v or c.to_v == e.to_v]
 
-            e_0 = None
+            new_edge = None
             if not contains_t and not contains_u:  # if t not ∈ C and u not∈ C:
-                e_0 = e  # e0 ← e
+                new_edge = e  # e0 ← e
 
             elif contains_t and not contains_u:
-                e_0 = Edge(v_C, e.to_v, e.weight)  # e0 ← new Edge(vC, u)
-                # score[e0] ← score[e]
+                new_edge = Edge(new_node, e.to_v, e.weight)  # e0 ← new Edge(vC, u)
 
             elif contains_u and not contains_t:
-                # e0 ← new Edge(t, vC)
-                e_0 = Edge(e.from_v, v_C, 0)
+                new_edge = Edge(e.from_v, new_node, 0)
 
                 # kicksOut[e0] ← bestInEdge[u]
-                kicks_out[(e_0.from_v, e_0.to_v)] = best_in_edge[e.to_v]
+                removed_edge_bag[(new_edge.from_v, new_edge.to_v)] = best_in_edge[e.to_v]
 
                 # score[e0] ← score[e] − score[kicksOut[e0].weight]
-                e_0.weight = e.weight - kicks_out[(e_0.from_v, e_0.to_v)].weight
+                new_edge.weight = e.weight - removed_edge_bag[(new_edge.from_v, new_edge.to_v)].weight
 
-            real[e_0] = e  # remember the original
-            E_0.append(e_0)  # E0 ← E0 ∪ {e0}
+            real[new_edge] = e  # remember the original edge
+            new_edges.append(new_edge)  # E0 ← E0 ∪ {e0}
 
-        A = minimum_spanning_arborescence(V_0, E_0, root)  # A ← Get1Best({V0, E0}, ROOT )
+        sub_arborescence = minimum_spanning_arborescence(new_sub_node, new_edges, root)
 
         path = []
-        # if len(A) >= v_C:
         if not [e for e in cycle if
-                not [k for k in kicks_out[A[v_C]] if e.from_v != k.from_v and e.to_v != k.to_v]]:
+                not [k for k in removed_edge_bag[sub_arborescence[new_node]]
+                     if e.from_v != k.from_v and e.to_v != k.to_v]]:
             path.append(e)
 
-        path.append(real[e_0])
-        return path  # return {real[e0] | e0 ∈ A} ∪ (CE \ {kicksOut[A[vC]]})
+        path.append(real[new_edge])
+        return path  # return {real[e0] | e0 ∈ sub_arborescence} ∪ (CE \ {kicksOut[sub_arborescence[vC]]})
 
     return best_in_edge
 
@@ -297,9 +286,15 @@ def get_cycle(edges):
     return None
 
 
-def get_total_cost(list_of_edges):
+def get_total_cost(list_of_edges, sol):
     cost = 0
     for edge in list_of_edges:
-        cost += list_of_edges[edge].weight
-
+        cost += list_of_edges[edge].weight + sol.graph[sol.visited[-1]][list_of_edges[edge].from_v]
     return cost
+
+
+def gen_node_code():
+    global infinit_val
+    infinit_val -= 1
+
+    return infinit_val
