@@ -1,7 +1,8 @@
 # TP1 - Searching algorithms
 
 ## General Requirement
-    - Python Version >= 3
+    Python Version >= 3
+    Use Python3 instead
 ## How to run in the folder
 
   1 - Open a terminal window
