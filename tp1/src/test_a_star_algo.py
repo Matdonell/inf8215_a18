@@ -35,7 +35,7 @@ class AStarExplorerTest(unittest.TestCase):
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        self.assertEqual(astar_sol.g, expected_cost)
+        self.assertEqual(expected_cost, astar_sol.g)
 
     def test_2(self):
         # test 2  --------------  OPT. SOL. = 30
@@ -53,8 +53,8 @@ class AStarExplorerTest(unittest.TestCase):
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        self.assertEqual(astar_sol.g, expected_cost)
-
+        self.assertEqual(expected_cost, astar_sol.g)
+    #
     def test_3(self):
         # test 3  --------------  OPT. SOL. = 26
 
@@ -71,7 +71,7 @@ class AStarExplorerTest(unittest.TestCase):
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        self.assertEqual(astar_sol.g, expected_cost)
+        self.assertEqual(expected_cost, astar_sol.g)
 
     def test_4(self):
         # test 4  --------------  OPT. SOL. = 40
@@ -89,7 +89,7 @@ class AStarExplorerTest(unittest.TestCase):
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        self.assertEqual(astar_sol.g, expected_cost)
+        self.assertEqual(expected_cost, astar_sol.g)
 
 
 if __name__ == '__main__':

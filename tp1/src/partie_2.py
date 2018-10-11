@@ -9,11 +9,15 @@ import copy
 import heapq
 import math
 
+from edge import Edge
+
 # Ensure to support Python 2 and 3 by using the correct import
 try:
     import queue as q
 except ImportError:
     import Queue as q
+
+infinit_val = 10000000000000
 
 
 class Solution:
@@ -74,7 +78,7 @@ def fastest_path_estimation(sol):
     for i in range(len(sol.not_visited)):
         sub_node = copy.deepcopy(sol)
         sub_node.add(i)
-        sub_node.h = math.inf
+        sub_node.g = math.inf
 
         # init all distances with infinite value for the sub nodes
         distance_map[sol.not_visited[i]] = math.inf
@@ -90,7 +94,7 @@ def fastest_path_estimation(sol):
 
         # If the last visited is the destination, we are done
         if best_sol.visited[-1] == pm:
-            return best_sol.h
+            return best_sol.g
 
         # For each unvisited sub node of the current node
         for i in range(len(best_sol.not_visited)):
@@ -102,10 +106,9 @@ def fastest_path_estimation(sol):
             # If we have a best move with less cost, let's update the new cost
             if new_cost < distance_map[best_sol.not_visited[i]]:
                 distance_map[best_sol.not_visited[i]] = new_cost
-
                 sub_node = copy.deepcopy(best_sol)
                 sub_node.add(i)
-                sub_node.h = new_cost
+                sub_node.g = new_cost
                 heapq.heappush(T, sub_node)
 
     return None
@@ -125,6 +128,22 @@ def A_star(graph, places):
     heapq.heappush(T, root)
     best_solution = copy.deepcopy(root)
 
+    edges = []
+    heapq.heapify(edges)
+
+    # Generate all edges between the nodes except the root
+    for i in range(len(root.not_visited)):
+        for j in range(len(root.not_visited)):
+
+            if root.not_visited[i] != root.not_visited[j]:
+                # Get the weight
+                weight = root.graph[root.not_visited[i]][root.not_visited[j]]
+
+                # Create the node and add it to the queue
+                edge = Edge(root.not_visited[i], root.not_visited[j], weight)
+
+                heapq.heappush(edges, edge)
+
     while best_solution.not_visited:
         best_solution = heapq.heappop(T)
 
@@ -143,14 +162,139 @@ def A_star(graph, places):
                 new_sol.add(i)
 
                 # Update the fastest path to pm
-                new_sol.h = fastest_path_estimation(new_sol)
+                # new_sol.h = fastest_path_estimation(new_sol)
+
+                new_edges = []
+                for i in range(len(new_sol.not_visited)):
+                    for j in range(len(new_sol.not_visited)):
+
+                        if new_sol.not_visited[i] != new_sol.not_visited[j]:
+                            # Get the weight
+                            weight = new_sol.graph[new_sol.not_visited[i]][new_sol.not_visited[j]]
+
+                            # Create the node and add it to the queue
+                            edge = Edge(new_sol.not_visited[i], new_sol.not_visited[j], weight)
+
+                            new_edges.append(edge)
+
+                result = minimum_spanning_arborescence(new_sol, edges)
+
+                new_sol.h = get_total_cost(result, new_sol)
+
                 heapq.heappush(T, new_sol)
 
     return best_solution
 
 
-def minimum_spanning_arborescence(sol):
+def minimum_spanning_arborescence(sol, E):
     """
     Returns the cost to reach the vertices in the unvisited list
     """
-    # TODO : to implement
+    # if not isinstance(sol, Solution):
+    #     raise ValueError("The parameter should be a type of Solution")
+
+    # root = sol.visited[-1]  # The root is the last visited node
+    # pm = sol.not_visited[-1]  # the destination node
+
+    best_in_edge = {}
+    removed_edge_bag = {}
+    real = {}
+    E = copy.deepcopy(E)
+
+    V = sol.not_visited
+    root = sol.visited[-1]
+
+    for v in V:
+        incoming_edge_to_v = []
+        heapq.heapify(incoming_edge_to_v)
+
+        for tmp in E:
+            if tmp.to_v == v:
+                heapq.heappush(incoming_edge_to_v, tmp)
+        best_in_edge[v] = heapq.heappop(incoming_edge_to_v)
+
+        cycle = get_cycle(best_in_edge)
+
+        if cycle is None:
+            return best_in_edge
+
+        # build a new graph in which C is contracted into a single node
+        new_node = gen_node_code()  # vC ← new Node
+        new_sub_node = [n for n in V if not [c for c in cycle if c.from_v == n or c.to_v == n]]  # V0 ← V ∪ {vC } \ C
+        new_sub_node.append(new_node)
+        new_edges = []
+
+        for e in cycle:  # e = (t, u) in E:
+            contains_t = [c for c in cycle if c.from_v == e.from_v or c.to_v == e.from_v]
+            contains_u = [c for c in cycle if c.from_v == e.to_v or c.to_v == e.to_v]
+
+            new_edge = None
+            if not contains_t and not contains_u:  # if t not ∈ C and u not∈ C:
+                new_edge = e  # e0 ← e
+
+            elif contains_t and not contains_u:
+                new_edge = Edge(new_node, e.to_v, e.weight)  # e0 ← new Edge(vC, u)
+
+            elif contains_u and not contains_t:
+                new_edge = Edge(e.from_v, new_node, 0)
+
+                # kicksOut[e0] ← bestInEdge[u]
+                removed_edge_bag[(new_edge.from_v, new_edge.to_v)] = best_in_edge[e.to_v]
+
+                # score[e0] ← score[e] − score[kicksOut[e0].weight]
+                new_edge.weight = e.weight - removed_edge_bag[(new_edge.from_v, new_edge.to_v)].weight
+
+            real[new_edge] = e  # remember the original edge
+            new_edges.append(new_edge)  # E0 ← E0 ∪ {e0}
+
+        sub_arborescence = minimum_spanning_arborescence(new_sub_node, new_edges, root)
+
+        path = []
+        if not [e for e in cycle if
+                not [k for k in removed_edge_bag[sub_arborescence[new_node]]
+                     if e.from_v != k.from_v and e.to_v != k.to_v]]:
+            path.append(e)
+
+        path.append(real[new_edge])
+        return path  # return {real[e0] | e0 ∈ sub_arborescence} ∪ (CE \ {kicksOut[sub_arborescence[vC]]})
+
+    return best_in_edge
+
+
+def get_cycle(edges):
+    visited = set()
+    path = []
+    path_set = set(path)
+    stack = [iter(edges)]
+
+    while stack:
+        for v in stack[-1]:
+            if v in path_set:
+                return path_set
+            elif not [e for e in visited if e.from_v == v.from_v and e.to_v == v.to_v]:
+                visited.add(v)
+                path.append(v)
+                path_set.add(v)
+                for e in edges:
+                    if edges[e].from_v == v:
+                        stack.append()
+                        break
+        else:
+            if path:
+                path_set.remove(path.pop())
+            stack.pop()
+    return None
+
+
+def get_total_cost(list_of_edges, sol):
+    cost = 0
+    for edge in list_of_edges:
+        cost += list_of_edges[edge].weight + sol.graph[sol.visited[-1]][list_of_edges[edge].from_v]
+    return cost
+
+
+def gen_node_code():
+    global infinit_val
+    infinit_val -= 1
+
+    return infinit_val
