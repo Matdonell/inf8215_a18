@@ -7,7 +7,6 @@
 
 import copy
 import heapq
-import math
 
 from edge import Edge
 
@@ -17,6 +16,8 @@ try:
 except ImportError:
     import Queue as q
 
+# This counter is used as a workaround to create new indexes for the contracted nodes
+# We can find a better way
 counter_fix_me = 10000000000000
 
 
@@ -124,6 +125,7 @@ def minimum_spanning_arborescence(sol, edges):
     removed_edge_bag = {}
     original_edges = {}
     root = sol.visited[-1]  # The root is the last visited node
+    destination_node = sol.not_visited[-1]
 
     for v in sol.not_visited:
         incoming_edge_to_v = []
@@ -149,39 +151,49 @@ def minimum_spanning_arborescence(sol, edges):
         new_sub_nodes.append(new_node)
         new_edges = []
 
-        for e in cycle:  # e = (t, u) in E:
-            contains_t = [c for c in cycle if c.from_v == e.from_v or c.to_v == e.from_v]
-            contains_u = [c for c in cycle if c.from_v == e.to_v or c.to_v == e.to_v]
+        for e in cycle:  # edges in the cycle
+            for c in cycle:
+                if c.from_v == e.from_v or c.to_v == e.from_v:
+                    start_node_in_cycle = True
+
+            for c in cycle:
+                if c.from_v == e.to_v or c.to_v == e.to_v:
+                    end_node_in_cycle = True
 
             new_edge = None
-            if not contains_t and not contains_u:  # if t not ∈ C and u not∈ C:
-                new_edge = e  # e0 ← e
+            if not start_node_in_cycle and not end_node_in_cycle:
+                new_edge = e
 
-            elif contains_t and not contains_u:
-                new_edge = Edge(new_node, e.to_v, e.weight)  # e0 ← new Edge(vC, u)
+            elif start_node_in_cycle and not end_node_in_cycle:
+                new_edge = Edge(new_node, e.to_v, e.weight)
 
-            elif contains_u and not contains_t:
+            elif end_node_in_cycle and not start_node_in_cycle:
                 new_edge = Edge(e.from_v, new_node, 0)
 
-                # kicksOut[e0] ← bestInEdge[u]
+                # save the best incoming edge to the new contracted edge
                 removed_edge_bag[(new_edge.from_v, new_edge.to_v)] = best_in_edge[e.to_v]
 
-                # score[e0] ← score[e] − score[kicksOut[e0].weight]
+                # Update the contracted edge weight by removing the cost of the removed one
                 new_edge.weight = e.weight - removed_edge_bag[(new_edge.from_v, new_edge.to_v)].weight
 
-            original_edges[new_edge] = e  # remember the original edge
-            new_edges.append(new_edge)  # E0 ← E0 ∪ {e0}
+            # if e.to_v == destination_node:
+            #     break
+
+            # Save the original edge and add the new one
+            original_edges[new_edge] = e
+            new_edges.append(new_edge)
 
         sub_tree = minimum_spanning_arborescence(new_sub_nodes, new_edges, root)
 
+        # After saving the removed edge, the remainging is a minimum arborescence
         path = []
-        if not [e for e in cycle if
-                not [k for k in removed_edge_bag[sub_tree[new_node]]
-                     if e.from_v != k.from_v and e.to_v != k.to_v]]:
+        if not [e for e in cycle
+                if not [k for k in removed_edge_bag[sub_tree[new_node]]
+                        if e.from_v != k.from_v and e.to_v != k.to_v]]:
             path.append(e)
 
         path.append(original_edges[new_edge])
-        return path  # return {original_edges[e0] | e0 ∈ new_node} ∪ (CE \ {kicksOut[new_node[vC]]})
+        return path
 
     return best_in_edge
 
@@ -233,6 +245,8 @@ def get_total_cost(list_of_edges, sol):
 def gen_node_code():
     """
     This method return a global counter but is used as a workaround
+    The counter is used as a workaround to create new indexes for the contracted nodes
+    We can find a better way
     Fix me after please
     :return:
     """
