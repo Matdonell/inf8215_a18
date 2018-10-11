@@ -22,7 +22,7 @@
 
     python3 -m unittest test_a_star_djisktra_algo.py
   
-  ### With Minimum Spanning Arborescence
+  ### With Minimum Spanning Arborescence by Edmonds
     python3 -m unittest test_a_star_mst_algo.py
   
    
