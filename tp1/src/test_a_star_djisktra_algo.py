@@ -8,7 +8,7 @@
 import unittest
 import time
 
-import partie_2 as AStarExplorer
+import partie_2_1 as AStarExplorer
 from utility import Utility
 
 
