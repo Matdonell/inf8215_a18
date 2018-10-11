@@ -183,7 +183,7 @@ def minimum_spanning_arborescence(sol, edges):
             original_edges[new_edge] = e
             new_edges.append(new_edge)
 
-        sub_tree = minimum_spanning_arborescence(new_sub_nodes, new_edges, root)
+        sub_tree = minimum_spanning_arborescence(new_sub_nodes, new_edges)
 
         # After saving the removed edge, the remainging is a minimum arborescence
         path = []
@@ -219,8 +219,8 @@ def get_cycle(edges):
                 path_set.add(v)
                 for e in edges:
                     if edges[e].from_v == v:
-                        stack.append()
-                        break
+                        stack.append(edges[e].to_v)
+                break
         else:
             if path:
                 path_set.remove(path.pop())
