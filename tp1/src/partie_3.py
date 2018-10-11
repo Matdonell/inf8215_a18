@@ -1,16 +1,13 @@
 # ----------------------------------------------------------------
 # Authors: Mathieu Kabore, Florence Gaborit and Reph D. Mombrun
 # Date: 11/09/2018
-# Last update: 12/09/2018
+# Last update: 10/10/2018
 # INF8215 TP1
 # ----------------------------------------------------------------
 
 import time
 import copy
-import numpy as np
-from random import shuffle, randint
-
-from stack import Stack
+from random import randint
 
 
 class Solution:
@@ -199,7 +196,7 @@ def vns(sol, k_max, t_max):
         new_sol = shaking(best_sol, k)
 
         # Do a local search on the solution generated from the kth neighborhood
-        new_sol = local_search_2opt(new_sol, False, t_init, t_max)
+        new_sol = local_search_2opt(new_sol, True, t_init, t_max)
 
         # If the new solution has a better cost then,
         # update the current best solution
