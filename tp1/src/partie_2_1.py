@@ -9,11 +9,15 @@ import copy
 import heapq
 import math
 
+from edge import Edge
+
 # Ensure to support Python 2 and 3 by using the correct import
 try:
     import queue as q
 except ImportError:
     import Queue as q
+
+counter_fix_me = 10000000000000
 
 
 class Solution:
@@ -74,7 +78,7 @@ def fastest_path_estimation(sol):
     for i in range(len(sol.not_visited)):
         sub_node = copy.deepcopy(sol)
         sub_node.add(i)
-        sub_node.h = math.inf
+        sub_node.g = math.inf
 
         # init all distances with infinite value for the sub nodes
         distance_map[sol.not_visited[i]] = math.inf
@@ -90,7 +94,7 @@ def fastest_path_estimation(sol):
 
         # If the last visited is the destination, we are done
         if best_sol.visited[-1] == pm:
-            return best_sol.h
+            return best_sol.g
 
         # For each unvisited sub node of the current node
         for i in range(len(best_sol.not_visited)):
@@ -102,10 +106,9 @@ def fastest_path_estimation(sol):
             # If we have a best move with less cost, let's update the new cost
             if new_cost < distance_map[best_sol.not_visited[i]]:
                 distance_map[best_sol.not_visited[i]] = new_cost
-
                 sub_node = copy.deepcopy(best_sol)
                 sub_node.add(i)
-                sub_node.h = new_cost
+                sub_node.g = new_cost
                 heapq.heappush(T, sub_node)
 
     return None
@@ -124,6 +127,22 @@ def A_star(graph, places):
     heapq.heapify(T)
     heapq.heappush(T, root)
     best_solution = copy.deepcopy(root)
+
+    edges = []
+    heapq.heapify(edges)
+
+    # Generate all edges between the nodes except the root
+    for i in range(len(root.not_visited)):
+        for j in range(len(root.not_visited)):
+
+            if root.not_visited[i] != root.not_visited[j]:
+                # Get the weight
+                weight = root.graph[root.not_visited[i]][root.not_visited[j]]
+
+                # Create the node and add it to the queue
+                edge = Edge(root.not_visited[i], root.not_visited[j], weight)
+
+                heapq.heappush(edges, edge)
 
     while best_solution.not_visited:
         best_solution = heapq.heappop(T)
@@ -147,10 +166,3 @@ def A_star(graph, places):
                 heapq.heappush(T, new_sol)
 
     return best_solution
-
-
-def minimum_spanning_arborescence(sol):
-    """
-    Returns the cost to reach the vertices in the unvisited list
-    """
-    # TODO : to implement

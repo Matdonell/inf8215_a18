@@ -1,16 +1,13 @@
 # ----------------------------------------------------------------
 # Authors: Mathieu Kabore, Florence Gaborit and Reph D. Mombrun
 # Date: 11/09/2018
-# Last update: 12/09/2018
+# Last update: 10/10/2018
 # INF8215 TP1
 # ----------------------------------------------------------------
 
 import time
 import copy
-import numpy as np
-from random import shuffle, randint
-
-from stack import Stack
+from random import randint
 
 
 class Solution:
@@ -88,7 +85,7 @@ def initial_sol(graph, places_to_visit):
     sol = Solution(places_to_visit, graph)
 
     while len(sol.not_visited) != 1:
-        idx = randint(0, len(sol.not_visited) - 1)
+        idx = randint(0, len(sol.not_visited) - 2)  # Skip pm
         sol.add(idx)
     sol.add(0)
 
@@ -111,44 +108,19 @@ def shaking(sol, k):
     return new_sol
 
 
-def local_search_2opt(sol):
-    """
-    Apply 2-opt local search over sol
-    """
-    n=len(sol.visited)
-    min=sol.g
-    opt_sol=copy.deepcopy(sol)
-    for j in range(2, n):
-        for i in range(1, j):
-            L=sol.visited[i+1:j-1]
-            L=L.reverse()
-            new_visited=sol.visited[:i-1]+sol.visited[j]+L+sol.visited[i]+sol.visited[j+1:]
-            new_sol=copy.deepcopy(sol)
-            new_sol.visited=new_visited
-            new_sol.g=0
-            for k in range(n-1):
-                new_sol.g+=sol.graph[new_visited[k]][new_visited[k+1]]
-            if new_sol.g<min:
-                opt_sol=copy.deepcopy(new_sol.g)
-                min=new_sol.g
-            #pour recreer une solution avec la bonne liste et recalculer le cout
-            #verifier que ca marche ?
-    return opt_sol
-
-
-def alternative_local_search_2opt(sol, must_restart_as_soon_better_found=False, t_init=-1, t_max=60000):
+def local_search_2opt(sol, must_restart_as_soon_better_found=False, t_init=-1, t_max=60):
     """
     Apply 2-opt local search over sol.
     If there was amelioration, then this function will search again.
     Therefore, it could impact the execution time of VNS t_max.
-    Here, we introduce new parameters: t_init and duration [ms] to better control
+    Here, we introduce new parameters: t_init and duration [s] to better control
     the execution time of VNS via this function.
     """
     assert len(sol.visited) > 4  # At least 5 cities in this project: p1, i, i', j, pm
 
     # If the init time was not passed then initialize t_init with a valid value
     if t_init < 0:
-        t_init = current_time_in_ms()
+        t_init = time.time()
 
     # The solution to return
     opt_sol = copy.deepcopy(sol)
@@ -192,13 +164,13 @@ def alternative_local_search_2opt(sol, must_restart_as_soon_better_found=False, 
                     there_is_amelioration = True
 
                     # It t_max is reached, then return the current solution
-                    if current_time_in_ms() - t_init >= t_max:
+                    if time.time() - t_init >= t_max:
                         return opt_sol
 
                     # If the search should restart as soon a better solution is found then
                     # just do a recursive call with the current solution as argument
                     if must_restart_as_soon_better_found:
-                        return alternative_local_search_2opt(opt_sol, True, t_init, t_max)
+                        return local_search_2opt(opt_sol, True, t_init, t_max)
 
                 j += 1
             i += 1
@@ -214,7 +186,7 @@ def vns(sol, k_max, t_max):
     # Reminder: neighborhood k corresponds to the permutations
     # of k pairs of vertices
 
-    t_init = current_time_in_ms()
+    t_init = time.time()
     best_sol = sol
     duration = 0
     k = 1
@@ -224,24 +196,18 @@ def vns(sol, k_max, t_max):
         new_sol = shaking(best_sol, k)
 
         # Do a local search on the solution generated from the kth neighborhood
-        # new_sol = local_search_2opt(new_sol)  # FIXME: Error: can not do new_sol.g [line 226]
-        new_sol = alternative_local_search_2opt(new_sol, False, t_init, t_max)
+        new_sol = local_search_2opt(new_sol, False, t_init, t_max)
 
         # If the new solution has a better cost then,
         # update the current best solution
         if new_sol.g < best_sol.g:
-            best_sol = copy.deepcopy(new_sol)  # FIXME : is deepcopy required here?
+            best_sol = copy.deepcopy(new_sol)
+            k = 1
+        else:
+            k += 1
 
-        # Keep track of the elapsed time and the neighborhood
-        duration = current_time_in_ms() - t_init
-        k += 1
+        # Keep track of the elapsed time
+        duration = time.time() - t_init
 
     return best_sol
 
-
-def current_time_in_ms():
-    """
-    Simply return the current time in ms
-    :return: The current time in ms.
-    """
-    return int(round(time.time() * 1000))

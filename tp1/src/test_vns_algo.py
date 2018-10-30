@@ -29,14 +29,14 @@ class VnsExplorerTest(unittest.TestCase):
         # Act
         sol = VnsExplorer.initial_sol(self.montreal_graph, places)
         start_time = time.time()
-        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)  # For 1s pass t_max = 1000 ms
+        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)
 
         print(vns_sol.g)
         print(vns_sol.visited)
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        # self.assertEquals(vns_sol.g, expected_cost)  # FIXME : for VNS, the result is a local optimum
+        # self.assertEquals(vns_sol.g, expected_cost)  # For VNS, the result is a local optimum
         # which means it's normal that the result is different of the expected cost [global optimum]
         print("Expected cost : %d" % expected_cost)
 
@@ -50,14 +50,14 @@ class VnsExplorerTest(unittest.TestCase):
         # Act
         sol = VnsExplorer.initial_sol(self.montreal_graph, places)
         start_time = time.time()
-        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)  # For 1s pass t_max = 1000 ms
+        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)
 
         print(vns_sol.g)
         print(vns_sol.visited)
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        # self.assertEquals(vns_sol.g, expected_cost) # FIXME : for VNS, the result is a local optimum
+        # self.assertEquals(vns_sol.g, expected_cost) # For VNS, the result is a local optimum
         # which means it's normal that the result is different of the expected cost [global optimum]
         print("Expected cost : %d" % expected_cost)
 
@@ -71,14 +71,14 @@ class VnsExplorerTest(unittest.TestCase):
         # Act
         sol = VnsExplorer.initial_sol(self.montreal_graph, places)
         start_time = time.time()
-        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)  # For 1s pass t_max = 1000 ms
+        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)
 
         print(vns_sol.g)
         print(vns_sol.visited)
         print("--- %s seconds ---" % (time.time() - start_time))
 
         # Assert
-        # self.assertEquals(vns_sol.g, expected_cost) # FIXME : for VNS, the result is a local optimum
+        # self.assertEquals(vns_sol.g, expected_cost) # For VNS, the result is a local optimum
         # which means it's normal that the result is different of the expected cost [global optimum]
         print("Expected cost : %d" % expected_cost)
 
@@ -92,14 +92,14 @@ class VnsExplorerTest(unittest.TestCase):
         # Act
         sol = VnsExplorer.initial_sol(self.montreal_graph, places)
         start_time = time.time()
-        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)  # For 1s pass t_max = 1000 ms
+        vns_sol = VnsExplorer.vns(sol=sol, k_max=10, t_max=1)
 
         print(vns_sol.g)
         print(vns_sol.visited)
         print("--- %s seconds ---" % (time.time() - start_time))
         
         # Assert
-        # self.assertEquals(vns_sol.g, expected_cost) # FIXME : for VNS, the result is a local optimum
+        # self.assertEquals(vns_sol.g, expected_cost) # For VNS, the result is a local optimum
         # which means it's normal that the result is different of the expected cost [global optimum]
         print("Expected cost : %d" % expected_cost)
 
