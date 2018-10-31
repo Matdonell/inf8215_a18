@@ -30,8 +30,8 @@ prerequis(iNF1010, iNF2010).
 prerequis(iNF1010, lOG2410).
 prerequis(lOG1000, lOG2410).
 prerequis(iNF2010, iNF2705).
-prerequisx(A, B):- prerequis(A, B)
+getprerequis(A, B):- prerequis(A, B).
 
-prerequis(X, Y):- prerequis(X, Z) , prerequisx(Z, Y). 
+getprerequis(X, Y):- prerequis(X, Z) , getprerequis(Z, Y). 
 
 coursAPrendreComplet(A, Y):- prerequis(Y, A) ; corequis(Y, A). 
