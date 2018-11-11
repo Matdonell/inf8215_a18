@@ -1,6 +1,6 @@
 % ***********************************************************
 % File: Exercice1.mzn  
-% Name: Détective
+% Name: Exercice1: Détective
 % Desc: TODO
 % Authors: Tanga Mathieu Kaboré, Reph ...
 % Last update: 11/11/2018

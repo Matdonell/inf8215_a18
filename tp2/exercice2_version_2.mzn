@@ -1,5 +1,5 @@
 % ***********************************************************
-% File: Exercice2.mzn  
+% File: Exercice2_version_2.mzn  
 % Name: Exercice 2: Round-Robin
 % Desc: TODO
 % Authors: Tanga Mathieu Kaboré, Reph ...
@@ -17,11 +17,14 @@ set of int: equipe = 1..nbTeams;
 
 array[1..nbTeams, 1..nbTeams-1] of var equipe: calendrier;
 
-constraint forall (i in equipe, j in date) (calendrier[i, j] !=i);
+constraint forall (i in equipe, j in date) (calendrier[i, j] != i);
+
 constraint forall (j in date)(alldifferent([calendrier[i, j] | i in equipe]));
 constraint forall(i in equipe)(alldifferent([calendrier[i, j] | j in date]));
-constraint forall (i in equipe, j in datebis) (pv[i,calendrier[i, j]]!=pv[i, calendrier[i, j+1]] \/
-pv[i,calendrier[i, j]]!=pv[i, calendrier[i, j+2]]\/
- pv[i,calendrier[i, j]]!=pv[i,calendrier[i, j+3]]);
+
+constraint forall (i in equipe, j in datebis) (
+    pv[i,calendrier[i, j]]!=pv[i, calendrier[i, j+1]] \/
+    pv[i,calendrier[i, j]]!=pv[i, calendrier[i, j+2]]\/
+    pv[i,calendrier[i, j]]!=pv[i,calendrier[i, j+3]]);
 
 solve satisfy;
