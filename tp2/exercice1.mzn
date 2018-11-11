@@ -47,7 +47,7 @@ var position: jus;
 var position: eau;
 
 array[int] of var int: nationalites = [anglais, espagnol, ukrainien, norvegien, japonais];
-% Cette liste est utilisée pour retrouver et afficher les personne format texte après la résolution
+% Cette liste est utilisée pour retrouver et afficher les personnes en format texte après la résolution
 % Elle doit conserver l'ordre de la liste des nationalités ci-dessus 
 array[position] of string: nationalites_name = ["anglais", "espagnol", "ukrainien", "norvegien", "japonais"];
 
