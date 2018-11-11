@@ -112,9 +112,9 @@ solve satisfy;
 
 
 % Affichage du résultat final
-output ["\nSolution 1: L'" ++ nationalites_name[fix(g)]++
-        " boit de l'eau\n" | g in nationalites where fix(g)==fix(eau)];
+output ["\nSolution 1: L'" ++ nationalites_name[fix(pos)]++
+        " boit de l'eau\n" | pos in nationalites where fix(pos)==fix(eau)];
         
-output ["\nSolution 2: Le " ++ nationalites_name[fix(g)]++
-        " possède le zèbre\n\n" | g in nationalites where fix(g)==fix(zebre)];
+output ["\nSolution 2: Le " ++ nationalites_name[fix(pos)]++
+        " possède le zèbre\n\n" | pos in nationalites where fix(pos)==fix(zebre)];
 
