@@ -1,10 +1,10 @@
-% ***********************************************************
-% File: Exercice1.mzn  
-% Name: Exercice1: Détective
-% Desc: TODO
-% Authors: Tanga Mathieu Kaboré, Reph ...
+% **************************************************************************
+% File: Exercice2_version_2.mzn  
+% Name: Exercice 2: Detective
+% Desc: Constraint programming to resolve a CSP problem
+% Authors: Tanga Mathieu Kaboré, Florence Gaborit, Reph dauphin Mombrun
 % Last update: 11/11/2018
-% ***********************************************************
+% **************************************************************************
 
 include "alldifferent.mzn";
 
@@ -112,9 +112,11 @@ solve satisfy;
 
 
 % Affichage du résultat final
-output ["\nSolution 1: L'" ++ nationalites_name[fix(pos)]++
-        " boit de l'eau\n" | pos in nationalites where fix(pos)==fix(eau)];
+output ["\nSolution 1: Le "++ nationalites_name[fix(index)]++
+        " boit de l'eau [ norgevien = "++ show(norvegien)++ "; eau = "++ show(eau) ++ " ]\n" |
+         index in 1..pos where fix(nationalites[index])==fix(eau)];
         
 output ["\nSolution 2: Le " ++ nationalites_name[fix(pos)]++
-        " possède le zèbre\n\n" | pos in nationalites where fix(pos)==fix(zebre)];
+        " possède le zèbre [ japonais = "++ show(japonais)++ "; zèbre = "++ show(zebre) ++ " ]\n\n" |
+         index in 1..pos where fix(nationalites[index])==fix(zebre)];
 
