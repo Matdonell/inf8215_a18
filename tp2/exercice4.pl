@@ -118,16 +118,16 @@ artiste(victor_hugo).
 artiste(X) :- (musicien(X); jeu_video(X); film(X)),reel(X).
 
 
-ask(gouverne, Y) :-
-    format('~w gouverne ? ', [Y]),
+ask(acteur, Y) :-
+    format('~w est un acteur ? ', [Y]),
     read(Reponse),
     Reponse = 'oui'.
 ask(musicien, X) :-
     format('~w est un musicien ? ', [X]),
     read(Reponse),
     Reponse = 'oui'.
-ask(chanteur, X) :-
-    format('~w est un chanteur ? ', [X]),
+ask(artiste, X) :-
+    format('~w est un artiste ? ', [X]),
     read(Reponse),
     Reponse = 'oui'.
 
