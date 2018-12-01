@@ -1,12 +1,22 @@
+# ----------------------------------------------------------------
+# Authors: Mathieu Kaboré, Florence Gaborit and Reph D. Mombrun
+# Date: 12/09/2018
+# Last update: 02/11/2018
+# INF8215 TP3
+# ----------------------------------------------------------------
+
 from sklearn.base import BaseEstimator, ClassifierMixin
+
+import sklearn.preprocessing as skl_prep
 import numpy as np
 
 
-class SoftmaxClassifier(BaseEstimator, ClassifierMixin):  
+class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """A softmax classifier"""
 
-    def __init__(self, lr = 0.1, alpha = 100, n_epochs = 1000, eps = 1.0e-5,threshold = 1.0e-10 , regularization = True, early_stopping = True):
-       
+    def __init__(self, lr=0.1, alpha=100, n_epochs=1000, eps=1.0e-5, threshold=1.0e-10, regularization=True,
+                 early_stopping=True):
+
         """
             self.lr : the learning rate for weights update during gradient descent
             self.alpha: the regularization coefficient 
@@ -18,15 +28,13 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             self.early_stopping: enables early stopping to prevent overfitting
         """
 
-        self.lr = lr 
+        self.lr = lr
         self.alpha = alpha
         self.n_epochs = n_epochs
         self.eps = eps
         self.regularization = regularization
         self.threshold = threshold
         self.early_stopping = early_stopping
-        
-
 
     """
         Public methods, can be called by the user
@@ -37,7 +45,6 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         * fit_predict        
         * score
     """
-
 
     """
         In:
@@ -62,40 +69,30 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """
 
     def fit(self, X, y=None):
-        
+
         prev_loss = np.inf
         self.losses_ = []
 
         self.nb_feature = X.shape[1]
         self.nb_classes = len(np.unique(y))
 
-        
-
-        # X_bias =         
+        # X_bias =
         # self.theta_  = 
-        
 
-        for epoch in range( self.n_epochs):
+        for epoch in range(self.n_epochs):
 
             # logits = 
             # probabilities = 
-            
-            
+
             # loss =                
             # self.theta_ = 
-            
+
             # self.losses_.append(loss)
 
             if self.early_stopping:
                 pass
 
-
         return self
-
-    
-
-   
-    
 
     """
         In: 
@@ -115,9 +112,8 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             getattr(self, "theta_")
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
-        
-        pass
 
+        pass
 
         """
         In: 
@@ -133,7 +129,6 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         Predicted classes
     """
 
-    
     def predict(self, X, y=None):
         try:
             getattr(self, "theta_")
@@ -141,12 +136,9 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             raise RuntimeError("You must train classifer before predicting data!")
         pass
 
-    
-
     def fit_predict(self, X, y=None):
         self.fit(X, y)
-        return self.predict(X,y)
-
+        return self.predict(X, y)
 
     """
         In : 
@@ -160,11 +152,10 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         Out:
         log loss between prediction and true labels
 
-    """    
+    """
 
     def score(self, X, y=None):
         pass
-    
 
     """
         Private methods, their names begin with an underscore
@@ -185,12 +176,10 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         Out:
         Probabilities
     """
-    
-    def _cost_function(self,probabilities, y ): 
-        pass
-    
 
-    
+    def _cost_function(self, probabilities, y):
+        pass
+
     """
         In :
         Target y: nb_examples * 1
@@ -206,11 +195,10 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         y one-hot encoded
     """
 
-    
-    
-    def _one_hot(self,y):
-        pass
-
+    def _one_hot(self, y):
+        lb = skl_prep.LabelBinarizer()
+        lb.fit(y)
+        return np.array(lb.transform(y)).tolist()
 
     """
         In :
@@ -222,10 +210,9 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         Out:
         Probabilities
     """
-    
-    def _softmax(self,z):
+
+    def _softmax(self, z):
         pass
-    
 
     """
         In:
@@ -243,8 +230,6 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
 
     """
 
-    def _get_gradient(self,X,y, probas):
-        
+    def _get_gradient(self, X, y, probas):
+
         pass
-    
-    
