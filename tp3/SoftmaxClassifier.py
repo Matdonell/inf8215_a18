@@ -7,7 +7,7 @@
 
 from sklearn.base import BaseEstimator, ClassifierMixin
 
-import sklearn.preprocessing as skl_prep
+import sklearn.preprocessing
 import numpy as np
 
 
@@ -196,7 +196,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """
 
     def _one_hot(self, y):
-        lb = skl_prep.LabelBinarizer()
+        lb = sklearn.preprocessing.LabelBinarizer()
         lb.fit(y)
         return np.array(lb.transform(y))
 
