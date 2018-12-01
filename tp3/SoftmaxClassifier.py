@@ -212,24 +212,46 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """
 
     def _softmax(self, z):
-        pass
 
-    """
-        In:
-        X with bias
-        y without one hot encoding
-        probabilities resulting of the softmax step
+        # Vecteur des probabilités de chaque exemple x
+        proba_x = []
 
-        Do:
-        One-hot encode y
-        Compute gradients
-        If self.regularization add l2 regularization term
+        for idx in range(len(z)):
+            zk = z[idx]
 
-        Out:
-        Gradient
+            # On calcule l'exponentielle de chaque zk
+            Px_k = np.exp(zk)
 
-    """
+            # Somme des exponentielles de chaque logit du vecteur z*
+            somme_exp_z = 0
 
-    def _get_gradient(self, X, y, probas):
+            # Faire la somme des exponentielles des zk
+            for idxi in range(len(z)):
+                zki = z[idxi]
+                somme_exp_z = somme_exp_z + np.exp(zki)
 
-        pass
+            # Ajouter la probabilité que l'exemple *x appartienne à la classe k.
+            proba_x.append(Px_k / somme_exp_z)
+
+        return np.array(proba_x)
+
+
+"""
+    In:
+    X with bias
+    y without one hot encoding
+    probabilities resulting of the softmax step
+
+    Do:
+    One-hot encode y
+    Compute gradients
+    If self.regularization add l2 regularization term
+
+    Out:
+    Gradient
+
+"""
+
+
+def _get_gradient(self, X, y, probas):
+    pass
