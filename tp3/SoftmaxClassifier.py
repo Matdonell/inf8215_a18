@@ -198,7 +198,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     def _one_hot(self, y):
         lb = skl_prep.LabelBinarizer()
         lb.fit(y)
-        return np.array(lb.transform(y)).tolist()
+        return np.array(lb.transform(y))
 
     """
         In :
