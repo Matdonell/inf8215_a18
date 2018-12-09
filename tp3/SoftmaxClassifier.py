@@ -75,19 +75,19 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
 
         self.nb_feature = X.shape[1]
         self.nb_classes = len(np.unique(y))
+        
 
         X_bias = np.insert(X, self.nb_feature, 1, axis=1)
         self.theta_ = np.random.rand(self.nb_feature + 2, self.nb_feature + 1)
 
         for epoch in range(self.n_epochs):
+            
 
-            # logits = 
-            # probabilities = 
-
-            # loss =                
-            # self.theta_ = 
-
-            # self.losses_.append(loss)
+            logits = np.dot(X_bias, self.theta_)
+            probabilities = self._softmax(logits)
+            loss = self._cost_function(probabilities,y)               
+            self.theta_ = self.theta_- (np.multiply(self.lr, self._get_gradient(X_bias, y, probabilities)))
+            self.losses_.append(loss)
 
             if self.early_stopping:
                 pass
@@ -113,8 +113,11 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
 
+        self=self.fit(X, y)
+        
+        
+        
         pass
-
         """
         In: 
         X without bias
@@ -174,7 +177,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         Ensure that probabilities are not equal to either 0. or 1. using self.eps
 
         Out:
-        Probabilities
+        cost (real number)
     """
 
     def _cost_function(self, probabilities, y):
@@ -202,8 +205,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
 
     """
         In :
-        Logits: (self.nb_features +1) * self.nb_classes
-
+         nb_examples * self.nb_classes
         Do:
         Compute softmax on logits
 
@@ -254,4 +256,5 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
 
 
 def _get_gradient(self, X, y, probas):
+    
     pass
