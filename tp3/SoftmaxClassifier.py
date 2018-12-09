@@ -159,8 +159,10 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
 
     """
 
-    def score(self, X, y=None):
-        predictions=self.predict(X)
+    def score(self, X, y=None): #proablement fuasse, à corriger
+        predictions=self.predict_proba(X)
+        self.regularization=False
+        return self._cost_function(predictions, y)
         
         pass
 
@@ -275,8 +277,13 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
 def _get_gradient(self, X, y, probas):
     
     hot_y=self._one_hot(y)
+    if self.regularization:
+            l2=np.multiply(self.alpha, np.sum(np.square(self.theta_))-np.sum(np.square(self.theta_[0]))) #on enleve la première ligne dans la somme
+        else:
+            l2=0
+        
     
-    grad=1/probas.shape[0]*np.dot(np.transpose(X), probas-hot_y)
-    return grad
+    grad=1/X.shape[0]*np.dot(np.transpose(X), probas-hot_y)
+    return grad #penser à ajouter L2, voir si on copie la valeur sur un matrice..? et enlever la dernière colonne (on ne dérive le biais ce qui donne zero)
     
     pass
