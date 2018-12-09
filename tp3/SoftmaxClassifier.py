@@ -160,6 +160,8 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """
 
     def score(self, X, y=None):
+        predictions=self.predict(X)
+        
         pass
 
     """
@@ -183,6 +185,19 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """
 
     def _cost_function(self, probabilities, y):
+        hot_y=self._one_hot(y)
+        probabilities[probabilities == 0]=self.eps
+        probabilities[probabilities == 1]=1-self.eps
+        if self.regularization:
+            l2=np.multiply(self.alpha, np.sum(np.square(self.theta_))-np.sum(np.square(self.theta_[0]))) #on enleve la première ligne dans la somme
+        else:
+            l2=0
+            
+        m=probabilities.shape[0]
+        log_loss=-1/m*np.sum(np.multiply(hot_y, np.log(probabilities)))
+        return log_loss+l2
+        
+        
         pass
 
     """
@@ -258,5 +273,10 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
 
 
 def _get_gradient(self, X, y, probas):
+    
+    hot_y=self._one_hot(y)
+    
+    grad=1/probas.shape[0]*np.dot(np.transpose(X), probas-hot_y)
+    return grad
     
     pass
