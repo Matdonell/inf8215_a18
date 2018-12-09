@@ -108,16 +108,16 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """
 
     def predict_proba(self, X, y=None):
+        
         try:
             getattr(self, "theta_")
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
-
+        
         self=self.fit(X, y)
-        
-        
-        
+        return self.probabilities
         pass
+        
         """
         In: 
         X without bias
@@ -137,6 +137,8 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             getattr(self, "theta_")
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
+        probabilities=self.predict_proba(X)
+        return np.argmax(probabilities, axis=1)
         pass
 
     def fit_predict(self, X, y=None):
