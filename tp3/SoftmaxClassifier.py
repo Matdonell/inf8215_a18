@@ -115,7 +115,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         self = self.fit(X, y)
         return self.probabilities
 
-        """
+    """
         In: 
         X without bias
 
@@ -195,41 +195,37 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         log_loss = -1 / m * np.sum(np.multiply(hot_y, np.log(probabilities)))
         return log_loss + l2
 
-        pass
-
-    """
-        In :
-        Target y: nb_examples * 1
-
-        Do:
-        One hot-encode y
-        [1,1,2,3,1] --> [[1,0,0],
-                         [1,0,0],
-                         [0,1,0],
-                         [0,0,1],
-                         [1,0,0]]
-        Out:
-        y one-hot encoded
-    """
-
     @staticmethod
     def _one_hot(y):
+        """
+            In :
+            Target y: nb_examples * 1
+
+            Do:
+            One hot-encode y
+            [1,1,2,3,1] --> [[1,0,0],
+                             [1,0,0],
+                             [0,1,0],
+                             [0,0,1],
+                             [1,0,0]]
+            Out:
+            y one-hot encoded
+        """
         lb = sklearn.preprocessing.LabelBinarizer()
         lb.fit(y)
         return np.array(lb.transform(y))
 
-    """
-        In :
-         nb_examples * self.nb_classes
-        Do:
-        Compute softmax on logits
+    @staticmethod
+    def _softmax(z):
+        """
+            In :
+             nb_examples * self.nb_classes
+            Do:
+            Compute softmax on logits
 
-        Out:
-        Probabilities
-    """
-
-    def _softmax(self, z):
-
+            Out:
+            Probabilities
+        """
         # Vecteur des probabilités de chaque exemple x
         proba_x = []
 
@@ -254,19 +250,18 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
 
     def _get_gradient(self, X, y, probas):
         """
-                In:
-                X with bias
-                y without one hot encoding
-                probabilities resulting of the softmax step
+            In:
+            X with bias
+            y without one hot encoding
+            probabilities resulting of the softmax step
 
-                Do:
-                One-hot encode y
-                Compute gradients
-                If self.regularization add l2 regularization term
+            Do:
+            One-hot encode y
+            Compute gradients
+            If self.regularization add l2 regularization term
 
-                Out:
-                Gradient
-
+            Out:
+            Gradient
         """
         hot_y = self._one_hot(y)
         if self.regularization:
