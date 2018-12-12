@@ -50,18 +50,6 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         * fit_predict        
         * score
     """
-    """
-        In:
-        X without bias
-
-        Do:
-        Add bias term to X
-        Compute the logits for X
-        Compute the probabilities using softmax
-
-        Out:
-        Predicted probabilities
-    """
 
     def fit(self, X, y=None):
         """
@@ -90,7 +78,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         self.nb_classes = len(np.unique(y))  # Another way is to get the maximum value in y
 
         X_bias = np.insert(X, self.nb_features, 1, axis=1)
-        self.theta_ = np.random.rand(self.nb_features + 2, self.nb_features + 1)
+        self.theta_ = np.random.rand(self.nb_features + 2, self.nb_features + 1) # Why + 2 and + 1?
 
         for epoch in range(self.n_epochs):
 
@@ -106,7 +94,18 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         return self
 
     def predict_proba(self, X, y=None):
+        """
+            In:
+            X without bias
 
+            Do:
+            Add bias term to X
+            Compute the logits for X
+            Compute the probabilities using softmax
+
+            Out:
+            Predicted probabilities
+        """
         try:
             getattr(self, "theta_")
         except AttributeError:
@@ -115,48 +114,44 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         self = self.fit(X, y)
         return self.probabilities
 
-    """
-        In: 
-        X without bias
-
-        Do:
-        Add bias term to X
-        Compute the logits for X
-        Compute the probabilities using softmax
-        Predict the classes
-
-        Out:
-        Predicted classes
-    """
-
     def predict(self, X, y=None):
+        """
+            In:
+            X without bias
+
+            Do:
+            Add bias term to X
+            Compute the logits for X
+            Compute the probabilities using softmax
+            Predict the classes
+
+            Out:
+            Predicted classes
+        """
         try:
             getattr(self, "theta_")
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
         probabilities = self.predict_proba(X)
         return np.argmax(probabilities, axis=1)
-        pass
 
     def fit_predict(self, X, y=None):
         self.fit(X, y)
         return self.predict(X, y)
 
-    """
-        In : 
-        X set of examples (without bias term)
-        y the true labels
-
-        Do:
-            predict probabilities for X
-            Compute the log loss without the regularization term
-
-        Out:
-        log loss between prediction and true labels
-
-    """
-
     def score(self, X, y=None):  # proablement fuasse, à corriger
+        """
+            In :
+            X set of examples (without bias term)
+            y the true labels
+
+            Do:
+                predict probabilities for X
+                Compute the log loss without the regularization term
+
+            Out:
+            log loss between prediction and true labels
+        """
         predictions = self.predict_proba(X)
         self.regularization = False
         return self._cost_function(predictions, y)
@@ -165,23 +160,22 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         Private methods, their names begin with an underscore
     """
 
-    """
-        In :
-        y without one hot encoding
-        probabilities computed with softmax
-
-        Do:
-        One-hot encode y
-        Ensure that probabilities are not equal to either 0. or 1. using self.eps
-        Compute log_loss
-        If self.regularization, compute l2 regularization term
-        Ensure that probabilities are not equal to either 0. or 1. using self.eps
-
-        Out:
-        cost (real number)
-    """
-
     def _cost_function(self, probabilities, y):
+        """
+            In :
+            y without one hot encoding
+            probabilities computed with softmax
+
+            Do:
+            One-hot encode y
+            Ensure that probabilities are not equal to either 0. or 1. using self.eps
+            Compute log_loss
+            If self.regularization, compute l2 regularization term
+            Ensure that probabilities are not equal to either 0. or 1. using self.eps
+
+            Out:
+            cost (real number)
+        """
         hot_y = self._one_hot(y)
         probabilities[probabilities == 0] = self.eps
         probabilities[probabilities == 1] = 1 - self.eps
