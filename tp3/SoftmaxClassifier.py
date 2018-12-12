@@ -36,6 +36,11 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         self.threshold = threshold
         self.early_stopping = early_stopping
 
+        # Initialize the quantity of features, classes and losses
+        self.nb_features = 0
+        self.nb_classes = 0
+        self.losses_ = []
+
     """
         Public methods, can be called by the user
         To create a custom estimator in sklearn, we need to define the following methods:
@@ -45,57 +50,8 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         * fit_predict        
         * score
     """
-
     """
         In:
-        X : the set of examples of shape nb_example * self.nb_features
-        y: the target classes of shape nb_example *  1
-
-        Do:
-        Initialize model parameters: self.theta_
-        Create X_bias i.e. add a column of 1. to X , for the bias term
-        For each epoch
-            compute the probabilities
-            compute the loss
-            compute the gradient
-            update the weights
-            store the loss
-        Test for early stopping
-
-        Out:
-        self, in sklearn the fit method returns the object itself
-
-
-    """
-
-    def fit(self, X, y=None):
-
-        prev_loss = np.inf
-        self.losses_ = []
-
-        self.nb_feature = X.shape[1]
-        self.nb_classes = len(np.unique(y))
-        
-
-        X_bias = np.insert(X, self.nb_feature, 1, axis=1)
-        self.theta_ = np.random.rand(self.nb_feature + 2, self.nb_feature + 1)
-
-        for epoch in range(self.n_epochs):
-            
-
-            logits = np.dot(X_bias, self.theta_)
-            probabilities = self._softmax(logits)
-            loss = self._cost_function(probabilities,y)               
-            self.theta_ = self.theta_- (np.multiply(self.lr, self._get_gradient(X_bias, y, probabilities)))
-            self.losses_.append(loss)
-
-            if self.early_stopping:
-                pass
-
-        return self
-
-    """
-        In: 
         X without bias
 
         Do:
@@ -107,17 +63,58 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         Predicted probabilities
     """
 
+    def fit(self, X, y=None):
+        """
+            In:
+            X : the set of examples of shape nb_example * self.nb_features
+            y: the target classes of shape nb_example *  1
+
+            Do:
+            Initialize model parameters: self.theta_
+            Create X_bias i.e. add a column of 1. to X , for the bias term
+            For each epoch
+                compute the probabilities
+                compute the loss
+                compute the gradient
+                update the weights
+                store the loss
+            Test for early stopping
+
+            Out:
+            self, in sklearn the fit method returns the object itself
+        """
+        prev_loss = np.inf
+        self.losses_.clear()
+
+        self.nb_features = X.shape[1]
+        self.nb_classes = len(np.unique(y))  # Another way is to get the maximum value in y
+
+        X_bias = np.insert(X, self.nb_features, 1, axis=1)
+        self.theta_ = np.random.rand(self.nb_features + 2, self.nb_features + 1)
+
+        for epoch in range(self.n_epochs):
+
+            logits = np.dot(X_bias, self.theta_)
+            probabilities = self._softmax(logits)
+            loss = self._cost_function(probabilities, y)
+            self.theta_ = self.theta_ - (np.multiply(self.lr, self._get_gradient(X_bias, y, probabilities)))
+            self.losses_.append(loss)
+
+            if self.early_stopping:
+                pass
+
+        return self
+
     def predict_proba(self, X, y=None):
-        
+
         try:
             getattr(self, "theta_")
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
-        
-        self=self.fit(X, y)
+
+        self = self.fit(X, y)
         return self.probabilities
-        pass
-        
+
         """
         In: 
         X without bias
@@ -137,7 +134,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             getattr(self, "theta_")
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
-        probabilities=self.predict_proba(X)
+        probabilities = self.predict_proba(X)
         return np.argmax(probabilities, axis=1)
         pass
 
@@ -159,12 +156,10 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
 
     """
 
-    def score(self, X, y=None): #proablement fuasse, à corriger
-        predictions=self.predict_proba(X)
-        self.regularization=False
+    def score(self, X, y=None):  # proablement fuasse, à corriger
+        predictions = self.predict_proba(X)
+        self.regularization = False
         return self._cost_function(predictions, y)
-        
-        pass
 
     """
         Private methods, their names begin with an underscore
@@ -187,19 +182,19 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
     """
 
     def _cost_function(self, probabilities, y):
-        hot_y=self._one_hot(y)
-        probabilities[probabilities == 0]=self.eps
-        probabilities[probabilities == 1]=1-self.eps
+        hot_y = self._one_hot(y)
+        probabilities[probabilities == 0] = self.eps
+        probabilities[probabilities == 1] = 1 - self.eps
         if self.regularization:
-            l2=np.multiply(self.alpha, np.sum(np.square(self.theta_))-np.sum(np.square(self.theta_[0]))) #on enleve la première ligne dans la somme
+            l2 = np.multiply(self.alpha, np.sum(np.square(self.theta_)) - np.sum(
+                np.square(self.theta_[0])))  # on enleve la première ligne dans la somme
         else:
-            l2=0
-            
-        m=probabilities.shape[0]
-        log_loss=-1/m*np.sum(np.multiply(hot_y, np.log(probabilities)))
-        return log_loss+l2
-        
-        
+            l2 = 0
+
+        m = probabilities.shape[0]
+        log_loss = -1 / m * np.sum(np.multiply(hot_y, np.log(probabilities)))
+        return log_loss + l2
+
         pass
 
     """
@@ -217,7 +212,8 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         y one-hot encoded
     """
 
-    def _one_hot(self, y):
+    @staticmethod
+    def _one_hot(y):
         lb = sklearn.preprocessing.LabelBinarizer()
         lb.fit(y)
         return np.array(lb.transform(y))
@@ -256,34 +252,28 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
 
         return np.array(proba_x)
 
+    def _get_gradient(self, X, y, probas):
+        """
+                In:
+                X with bias
+                y without one hot encoding
+                probabilities resulting of the softmax step
 
-"""
-    In:
-    X with bias
-    y without one hot encoding
-    probabilities resulting of the softmax step
+                Do:
+                One-hot encode y
+                Compute gradients
+                If self.regularization add l2 regularization term
 
-    Do:
-    One-hot encode y
-    Compute gradients
-    If self.regularization add l2 regularization term
+                Out:
+                Gradient
 
-    Out:
-    Gradient
-
-"""
-
-
-def _get_gradient(self, X, y, probas):
-    
-    hot_y=self._one_hot(y)
-    if self.regularization:
-            l2=np.multiply(self.alpha, np.sum(np.square(self.theta_))-np.sum(np.square(self.theta_[0]))) #on enleve la première ligne dans la somme
+        """
+        hot_y = self._one_hot(y)
+        if self.regularization:
+            l2 = np.multiply(self.alpha, np.sum(np.square(self.theta_)) - np.sum(
+                np.square(self.theta_[0])))  # on enleve la première ligne dans la somme
         else:
-            l2=0
-        
-    
-    grad=1/X.shape[0]*np.dot(np.transpose(X), probas-hot_y)
-    return grad #penser à ajouter L2, voir si on copie la valeur sur un matrice..? et enlever la dernière colonne (on ne dérive le biais ce qui donne zero)
-    
-    pass
+            l2 = 0
+
+        grad = 1 / X.shape[0] * np.dot(np.transpose(X), probas - hot_y)
+        return grad  # penser à ajouter L2, voir si on copie la valeur sur un matrice..? et enlever la dernière colonne (on ne dérive le biais ce qui donne zero)
