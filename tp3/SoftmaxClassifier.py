@@ -111,8 +111,8 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
 
-        self = self.fit(X, y)
-        return self.probabilities
+        # self = self.fit(X, y)
+        # return self.probabilities
 
     def predict(self, X, y=None):
         """
