@@ -6,15 +6,14 @@
 # ----------------------------------------------------------------
 
 import unittest
-import time
-import numpy as np
-from SoftmaxClassifier import SoftmaxClassifier
+import matplotlib.pyplot as plt
 
 from sklearn.datasets import load_iris
+from sklearn.metrics import precision_recall_fscore_support
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import precision_recall_fscore_support
-import matplotlib.pyplot as plt
+
+from SoftmaxClassifier import SoftmaxClassifier
 
 
 class SoftmaxClassifierTests(unittest.TestCase):
