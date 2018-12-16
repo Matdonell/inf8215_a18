@@ -77,13 +77,26 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         self.nb_features = X.shape[1]
         self.nb_classes = len(np.unique(y))
 
+        # Add a column of 1 to the matrix of examples X(m*n).
+        # The resulting new matrix is called X_bias(m*(n+1)).
         X_bias = np.insert(X, self.nb_features, 1, axis=1)
+
+        # Initialize the matrix theta((n+1)*k) with random numbers
         self.theta_ = np.random.rand(self.nb_features + 1, self.nb_classes)
 
         for epoch in range(self.n_epochs):
 
+            # Compute the logits. The resulting matrix is of size(m*k)
+            # z = x * Θ is a vector of size K, i.e. (K*1) that corresponds to the logits
+            # related to the example x for each of the K classes.
+            # Here, we are computing simultaneously for the m examples.
             logits = np.dot(X_bias, self.theta_)
+
+            # Get the corresponding probabilities of the logits by using softmax
+            # Good intro to softmax :
+            # https://medium.com/data-science-bootcamp/understand-the-softmax-function-in-minutes-f3a59641e86d
             probabilities = self._softmax(logits)
+
             loss = self._cost_function(probabilities, y)
             self.theta_ = self.theta_ - (np.multiply(self.lr, self._get_gradient(X_bias, y, probabilities)))
             self.losses_.append(loss)
@@ -91,7 +104,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             if self.early_stopping:
                 if len(self.losses_)>0: #éviter une erreur au cas où
                     if self.losses_[-2]-self.losses_[-1]<self.threshold:
-                        print(Dernier pas trop petit)
+                        print("Dernier pas trop petit")
                     break
 
         return self
@@ -213,7 +226,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         return np.array(lb.transform(y))
 
     @staticmethod
-    def _softmax(z):
+    def _softmax(Z):
         """
             In :
              nb_examples * self.nb_classes
@@ -223,27 +236,65 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             Out:
             Probabilities
         """
-        # Vecteur des probabilités de chaque exemple x
-        proba_x = []
+        # --------------------------------------------------------------------------------------------------
+        # Good intro to softmax:
+        # https://medium.com/data-science-bootcamp/understand-the-softmax-function-in-minutes-f3a59641e86d
+        # --------------------------------------------------------------------------------------------------
 
-        for idx in range(len(z)):
-            zk = z[idx]
+        # Z is the input matrix, i.e. the logits
+        # and z is one row in Z, where z = x ∗ Θ is a vector of size K,
+        # i.e. (K*1) that corresponds to the logits related to the example x
+        # for each of the K classes.
+        # Here, we are computing simultaneously for the m examples, i.e. m rows.
+        # Compute the exponential of all the elements in Z(m*k) and store
+        # the resulting matrix in exponential (m*k).
+        exponential = np.exp(Z)
 
-            # On calcule l'exponentielle de chaque zk
-            Px_k = np.exp(zk)
+        # Compute the sum for each z in the exponential matrix.
+        # The resulting matrix is of size (m*1) since the elements
+        # of all the columns for a specific row are summed up.
+        total = np.sum(exponential, axis=1)
 
-            # Somme des exponentielles de chaque logit du vecteur z*
-            somme_exp_z = 0
+        # Inverse all the elements in total
+        total = np.divide(np.ones(total.shape), total)
 
-            # Faire la somme des exponentielles des zk
-            for idxi in range(len(z)):
-                zki = z[idxi]
-                somme_exp_z = somme_exp_z + np.exp(zki)
+        # Do an element-wise multiplication to finally compute the softmax
+        # Good intro to numpy for broadcasting:
+        # https://howtothink.readthedocs.io/en/latest/PvL_06.html
+        return (exponential.T * total).T
 
-            # Ajouter la probabilité que l'exemple *x appartienne à la classe k.
-            proba_x.append(Px_k / somme_exp_z)
-
-        return np.array(proba_x)
+    # @staticmethod
+    # def _softmax(z):
+    #     """
+    #         In :
+    #          nb_examples * self.nb_classes
+    #         Do:
+    #         Compute softmax on logits
+    #
+    #         Out:
+    #         Probabilities
+    #     """
+    #     # Vecteur des probabilités de chaque exemple x
+    #     proba_x = []
+    #
+    #     for idx in range(len(z)):
+    #         zk = z[idx]
+    #
+    #         # On calcule l'exponentielle de chaque zk
+    #         Px_k = np.exp(zk)
+    #
+    #         # Somme des exponentielles de chaque logit du vecteur z*
+    #         somme_exp_z = 0
+    #
+    #         # Faire la somme des exponentielles des zk
+    #         for idxi in range(len(z)):
+    #             zki = z[idxi]
+    #             somme_exp_z = somme_exp_z + np.exp(zki)
+    #
+    #         # Ajouter la probabilité que l'exemple *x appartienne à la classe k.
+    #         proba_x.append(Px_k / somme_exp_z)
+    #
+    #     return np.array(proba_x)
 
     def _get_gradient(self, X, y, probas):
         """
