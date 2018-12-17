@@ -82,17 +82,21 @@ def parse_age(data):
         In: The expected data is a string similar to: 2 year
         Out: the corresponding amount of days
     """
-    n, time_unit = data.split(" ")
-    if "year" in time_unit.lower():
-        return 365 * n
-    elif "month" in time_unit.lower():
-        return 30 * n
-    elif "week" in time_unit.lower():
-        return 7 * n
-    elif "day" in time_unit.lower():
-        return n
+
+    if len(data) > 2 and ((' ' in data) == True):
+        n, time_unit = data.split(" ")
+        if "year" in time_unit.lower():
+            return 365 * n
+        elif "month" in time_unit.lower():
+            return 30 * n
+        elif "week" in time_unit.lower():
+            return 7 * n
+        elif "day" in time_unit.lower():
+            return n
+        else:
+            return 0
     else:
-        pass
+        return 0
 
 
 def parse_type(data):
@@ -165,11 +169,6 @@ print(x_train["Breed"].value_counts() / len(x_train))
 
 # The columns names
 column_names = ["AgeuponOutcome", "AnimalType", "SexuponOutcome", "Breed"]
-
-# Actual Transformation calls start here
-# X_dataframe = pd.DataFrame(X_data, columns = column_names)
-# X_train, X_test = train_test_split(X_dataframe, test_size=0.2, random_state=42)
-# X_train, X_test = X_train.reset_index(drop = True), X_test.reset_index(drop = True)
 
 X_train = pd.DataFrame(full_pipeline.fit_transform(x_train))
 print(X_train.head())
