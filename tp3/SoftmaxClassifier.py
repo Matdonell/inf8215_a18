@@ -221,10 +221,9 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         if self.regularization:
             l2 = np.multiply(float(self.alpha) / float(probabilities.shape[0]),
                              np.sum(np.square(self.theta_)))
-        else:
-            l2 = 0
+            log_loss += l2
 
-        return log_loss + l2
+        return log_loss
 
     def _one_hot(self, y):
         """
