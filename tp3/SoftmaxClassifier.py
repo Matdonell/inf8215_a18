@@ -315,7 +315,6 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         if self.regularization:
             l2 = np.multiply(float(self.alpha) / (float(X.shape[0])), (self.theta_))
             l2[-1] = np.zeros(l2.shape[1])
-        else:
-            l2 = 0
+            grad += l2
 
-        return grad + l2
+        return grad

@@ -8,3 +8,4 @@ tp2/.DS_Store
 tp3/.DS_Store
 tp3/.idea
 tp3/.vscode/temp.sql
+tp3/__pycache__/SoftmaxClassifier.cpython-36.pyc
