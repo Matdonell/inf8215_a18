@@ -98,7 +98,10 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             probabilities = self._softmax(logits)
 
             loss = self._cost_function(probabilities, y)
+
+            # Update theta
             self.theta_ = self.theta_ - (np.multiply(self.lr, self._get_gradient(X_bias, y, probabilities)))
+
             self.losses_.append(loss)
 
             if self.early_stopping:
@@ -263,39 +266,6 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         # https://howtothink.readthedocs.io/en/latest/PvL_06.html
         return (exponential.T * total).T
 
-    # @staticmethod
-    # def _softmax(z):
-    #     """
-    #         In :
-    #          nb_examples * self.nb_classes
-    #         Do:
-    #         Compute softmax on logits
-    #
-    #         Out:
-    #         Probabilities
-    #     """
-    #     # Vecteur des probabilités de chaque exemple x
-    #     proba_x = []
-    #
-    #     for idx in range(len(z)):
-    #         zk = z[idx]
-    #
-    #         # On calcule l'exponentielle de chaque zk
-    #         Px_k = np.exp(zk)
-    #
-    #         # Somme des exponentielles de chaque logit du vecteur z*
-    #         somme_exp_z = 0
-    #
-    #         # Faire la somme des exponentielles des zk
-    #         for idxi in range(len(z)):
-    #             zki = z[idxi]
-    #             somme_exp_z = somme_exp_z + np.exp(zki)
-    #
-    #         # Ajouter la probabilité que l'exemple *x appartienne à la classe k.
-    #         proba_x.append(Px_k / somme_exp_z)
-    #
-    #     return np.array(proba_x)
-
     def _get_gradient(self, X, y, probas):
         """
             In:
@@ -311,12 +281,18 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             Out:
             Gradient
         """
-        hot_y = self._one_hot(y)
-        if self.regularization:
-            l2 = np.multiply(self.alpha, np.sum(np.square(self.theta_)) - np.sum(
-                np.square(self.theta_[0])))  # on enleve la première ligne dans la somme
-        else:
-            l2 = 0
 
-        grad = 1 / X.shape[0] * np.dot(np.transpose(X), probas - hot_y)
-        return grad  # penser à ajouter L2, voir si on copie la valeur sur un matrice..? et enlever la dernière colonne (on ne dérive le biais ce qui donne zero)
+        # One-hot encode y. Btw, yohe stands for y one hot encoded :)
+        yohe = self._one_hot(y)
+
+        # Compute gradients
+        m = X.shape[0]  # Get the amount of rows of the X matrix
+        grad = np.multiply(1.0 / m, np.dot(np.transpose(X), probas - yohe))
+
+        # If self.regularization add l2 regularization term
+        if self.regularization:
+            L2 = np.multiply(self.alpha, np.sum(np.square(self.theta_))
+                             - np.sum(np.square(self.theta_[0]))) # on enleve la première ligne dans la somme
+            grad = grad + L2
+
+        return grad  # voir si on copie la valeur sur un matrice..? et enlever la dernière colonne (on ne dérive le biais ce qui donne zero)
