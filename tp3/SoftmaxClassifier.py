@@ -243,16 +243,9 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         """
         lb = sklearn.preprocessing.LabelBinarizer()
         lb.fit(y)
-
         return np.array(lb.transform(y))
 
-    """
-         Good intro to softmax :
-         https://medium.com/data-science-bootcamp/understand-the-softmax-function-in-minutes-f3a59641e86d
-    """
-
-    @staticmethod
-    def _softmax(Z):
+    def _softmax(self, Z):
         """
             In :
              nb_examples * self.nb_classes
