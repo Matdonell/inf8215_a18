@@ -85,7 +85,6 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         self.theta_ = np.random.rand(self.nb_features + 1, self.nb_classes)
 
         for epoch in range(self.n_epochs):
-
             # Compute the logits. The resulting matrix is of size(m*k)
             # z = x * Θ is a vector of size K, i.e. (K*1) that corresponds to the logits
             # related to the example x for each of the K classes.
@@ -93,18 +92,20 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             logits = np.dot(X_bias, self.theta_)
 
             # Get the corresponding probabilities of the logits by using softmax
-            # Good intro to softmax :
-            # https://medium.com/data-science-bootcamp/understand-the-softmax-function-in-minutes-f3a59641e86d
             probabilities = self._softmax(logits)
 
+            # Calculate the cost according to the samples
             loss = self._cost_function(probabilities, y)
-            self.theta_ = self.theta_ - (np.multiply(self.lr, self._get_gradient(X_bias, y, probabilities)))
+
+            # Updating theta according to the gradient
+            self.theta_ -= (np.multiply(self.lr, self._get_gradient(X_bias, y, probabilities)))
+
             self.losses_.append(loss)
 
-            if self.early_stopping:
-                if len(self.losses_) > 0:  # éviter une erreur au cas où
-                    if self.losses_[-2] - self.losses_[-1] < self.threshold:
-                        print("Dernier pas trop petit")
+            # Stop the training when the diff of the 2 last losses is less than the given threshold
+            if self.early_stopping == True and len(self.losses_) > 1:
+                last_loss_diff = self.losses_[-2] - self.losses_[-1]
+                if last_loss_diff < self.threshold:
                     break
 
         return self
@@ -167,7 +168,7 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         self.fit(X, y)
         return self.predict(X, y)
 
-    def score(self, X, y=None):  # proablement fuasse, à corriger
+    def score(self, X, y=None):
         """
             In :
             X set of examples (without bias term)
@@ -204,21 +205,28 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             Out:
             cost (real number)
         """
+
+        #  One-hot encode y
         hot_y = self._one_hot(y)
-        probabilities[probabilities == 0] = self.eps
-        probabilities[probabilities == 1] = 1 - self.eps
+
+        # Ensure that probabilities are not equal to either 0. or 1. using self.eps
+        probabilities[probabilities == 0.] = self.eps
+        probabilities[probabilities == 1.] = 1. - self.eps
+
+        # Compute log_loss
+        m = probabilities.shape[0]
+        log_loss = (-1 / m) * np.sum(np.multiply(hot_y, np.log(probabilities)))
+
+        # compute l2 regularization term
         if self.regularization:
-            l2 = np.multiply(self.alpha, np.sum(np.square(self.theta_)) - np.sum(
-                np.square(self.theta_[0])))  # on enleve la première ligne dans la somme
+            l2 = np.multiply(float(self.alpha) / float(probabilities.shape[0]),
+                             np.sum(np.square(self.theta_)))
         else:
             l2 = 0
 
-        m = probabilities.shape[0]
-        log_loss = -1 / m * np.sum(np.multiply(hot_y, np.log(probabilities)))
         return log_loss + l2
 
-    @staticmethod
-    def _one_hot(y):
+    def _one_hot(self, y):
         """
             In :
             Target y: nb_examples * 1
@@ -235,7 +243,13 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         """
         lb = sklearn.preprocessing.LabelBinarizer()
         lb.fit(y)
+
         return np.array(lb.transform(y))
+
+    """
+         Good intro to softmax :
+         https://medium.com/data-science-bootcamp/understand-the-softmax-function-in-minutes-f3a59641e86d
+    """
 
     @staticmethod
     def _softmax(Z):
@@ -275,39 +289,6 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         # https://howtothink.readthedocs.io/en/latest/PvL_06.html
         return (exponential.T * total).T
 
-    # @staticmethod
-    # def _softmax(z):
-    #     """
-    #         In :
-    #          nb_examples * self.nb_classes
-    #         Do:
-    #         Compute softmax on logits
-    #
-    #         Out:
-    #         Probabilities
-    #     """
-    #     # Vecteur des probabilités de chaque exemple x
-    #     proba_x = []
-    #
-    #     for idx in range(len(z)):
-    #         zk = z[idx]
-    #
-    #         # On calcule l'exponentielle de chaque zk
-    #         Px_k = np.exp(zk)
-    #
-    #         # Somme des exponentielles de chaque logit du vecteur z*
-    #         somme_exp_z = 0
-    #
-    #         # Faire la somme des exponentielles des zk
-    #         for idxi in range(len(z)):
-    #             zki = z[idxi]
-    #             somme_exp_z = somme_exp_z + np.exp(zki)
-    #
-    #         # Ajouter la probabilité que l'exemple *x appartienne à la classe k.
-    #         proba_x.append(Px_k / somme_exp_z)
-    #
-    #     return np.array(proba_x)
-
     def _get_gradient(self, X, y, probas):
         """
             In:
@@ -323,12 +304,18 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             Out:
             Gradient
         """
+
+        # One-hot encode y
         hot_y = self._one_hot(y)
+
+        # Compute gradients
+        grad = np.multiply(1. / (X.shape[0]), np.dot(X.T, np.subtract(probas, hot_y)))
+
+        # compute l2 regularization term
         if self.regularization:
-            l2 = np.multiply(self.alpha, np.sum(np.square(self.theta_)) - np.sum(
-                np.square(self.theta_[0])))  # on enleve la première ligne dans la somme
+            l2 = np.multiply(float(self.alpha) / (float(X.shape[0])), (self.theta_))
+            l2[-1] = np.zeros(l2.shape[1])
         else:
             l2 = 0
 
-        grad = 1 / X.shape[0] * np.dot(np.transpose(X), probas - hot_y)
-        return grad  # penser à ajouter L2, voir si on copie la valeur sur un matrice..? et enlever la dernière colonne (on ne dérive le biais ce qui donne zero)
+        return grad + l2
