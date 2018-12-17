@@ -105,8 +105,8 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             self.losses_.append(loss)
 
             if self.early_stopping:
-                if len(self.losses_)>0: #éviter une erreur au cas où
-                    if self.losses_[-2]-self.losses_[-1]<self.threshold:
+                if len(self.losses_) > 0:  # éviter une erreur au cas où
+                    if self.losses_[-2] - self.losses_[-1] < self.threshold:
                         print("Dernier pas trop petit")
                     break
 
@@ -130,8 +130,14 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
 
-        # self = self.fit(X, y)
-        # return self.probabilities
+        # Add bias term to X
+        X_bias = np.insert(X, self.nb_features, 1, axis=1)
+
+        # Compute the logits for X
+        logits = np.dot(X_bias, self.theta_)
+
+        # Compute the probabilities using softmax
+        return self._softmax(logits)
 
     def predict(self, X, y=None):
         """
@@ -151,7 +157,13 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             getattr(self, "theta_")
         except AttributeError:
             raise RuntimeError("You must train classifer before predicting data!")
-        probabilities = self.predict_proba(X)
+
+        # Using predict_proba(..) to perform these tasks:
+        #   1. Adding a bias term to X
+        #   2. Computing the logits for X
+        #   3. Computing the probabilities using softmax
+
+        probabilities = self.predict_proba(X, y)
         return np.argmax(probabilities, axis=1)
 
     def fit_predict(self, X, y=None):
@@ -217,10 +229,10 @@ class SoftmaxClassifier(BaseEstimator, ClassifierMixin):
             Do:
             One hot-encode y
             [1,1,2,3,1] --> [[1,0,0],
-                             [1,0,0],
-                             [0,1,0],
-                             [0,0,1],
-                             [1,0,0]]
+                            [1,0,0],
+                            [0,1,0],
+                            [0,0,1],
+                            [1,0,0]]
             Out:
             y one-hot encoded
         """
